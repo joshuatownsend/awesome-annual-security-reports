@@ -9,98 +9,100 @@ on:
       - 'README.md'
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   lint:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          
+
       - name: Install awesome-lint
         run: npm install --global awesome-lint
-        
-      # Run lint check and capture errors
-      - name: Run awesome-lint and process errors
+
+      - name: Run awesome-lint
         id: lint_check
         run: |
-          # Capture full awesome-lint output
           awesome-lint > lint_output.txt || true
-          
-          # Display the raw output for reference
           cat lint_output.txt
-          
-          # Process each error line and create GitHub annotations
-          grep -E "✖ [0-9]+:[0-9]+" lint_output.txt | while read -r error_line; do
-            if [[ $error_line =~ ✖[[:space:]]+([0-9]+):([0-9]+)[[:space:]]+(.+) ]]; then
-              LINE_NUM=${BASH_REMATCH[1]}
-              COL_NUM=${BASH_REMATCH[2]}
-              ERROR_MSG=${BASH_REMATCH[3]}
-              
-              # Extract the actual content of the line with the error
-              LINE_CONTENT=$(sed -n "${LINE_NUM}p" README.md)
-              
-              # Create a GitHub annotation with line content included in the message
-              echo "::error file=README.md,line=${LINE_NUM},col=${COL_NUM}::${ERROR_MSG} | Line content: ${LINE_CONTENT}"
-              # Also print to stdout for immediate visibility in run output
-              echo "Error in README.md:${LINE_NUM}:${COL_NUM} - ${ERROR_MSG} | Line content: ${LINE_CONTENT}"
-            fi
-          done
-      
-      # Check for lint ignore directives
-      - name: Check if lint exceptions exist
+
+          # Parse output and create annotations
+          awk -F '[:✖]' '/✖/ {
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", $1);
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2);
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", $3);
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", $4);
+
+            message=$4;
+            for(i=5; i<=NF; i++) {
+              message = message ":" $i
+            }
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", message);
+
+            print "::error file=" $1 ",line=" $2 ",col=" $3 "::" message
+          }' lint_output.txt
+
+      - name: Check for lint ignore directives
         run: |
           if grep -q "lint ignore" README.md; then
-            echo "Note: README.md contains lint ignore directives. This is expected for certain cases."
+            echo "ℹ️ README.md contains lint ignore directives — this is expected for some entries."
           fi
-      
-      # Final check - fail the workflow if linting failed
+
       - name: Determine workflow status
         id: status_check
         run: |
           if grep -q "✖" lint_output.txt; then
             echo "lint_status=failed" >> $GITHUB_OUTPUT
-            echo "::error::Linting failed. Please fix the errors shown above."
-            echo "If these are expected issues, add appropriate lint ignore directives."
+            ERROR_COUNT=$(grep -c "✖" lint_output.txt || echo "0")
+            echo "error_count=$ERROR_COUNT" >> $GITHUB_OUTPUT
+            echo "::error::Linting failed with $ERROR_COUNT error(s). See annotations above."
             exit 1
           else
             echo "lint_status=succeeded" >> $GITHUB_OUTPUT
-            echo "Linting succeeded!"
+            echo "error_count=0" >> $GITHUB_OUTPUT
+            echo "✅ Linting succeeded!"
           fi
 
-      - name: Summary
+      - name: Generate step summary
         if: always()
         run: |
-          echo "## 🧹 Awesome Lint Summary" >> $GITHUB_STEP_SUMMARY
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          STATUS="${{ steps.status_check.outputs.lint_status }}"
+          ERROR_COUNT="${{ steps.status_check.outputs.error_count }}"
+
+          echo "## 🧹 Awesome Lint" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Trigger | \`${{ github.event_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Errors | ${ERROR_COUNT:-0} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
-          if [ "${{ steps.status_check.outputs.lint_status }}" == "succeeded" ]; then
-            echo "### ✅ Linting Succeeded" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$STATUS" == "succeeded" ]; then
+            echo "### ✅ Lint Passed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "The `README.md` file passed all linting checks." >> $GITHUB_STEP_SUMMARY
+            echo "\`README.md\` passed all awesome-lint checks." >> $GITHUB_STEP_SUMMARY
           else
-            echo "### ❌ Linting Failed" >> $GITHUB_STEP_SUMMARY
+            echo "### ❌ Lint Failed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Linting errors were found in `README.md`. Please review the workflow logs for details and fix the issues." >> $GITHUB_STEP_SUMMARY
+            echo "**${ERROR_COUNT:-0}** error(s) found in \`README.md\`. Review the annotations in the [workflow run]($RUN_URL) for details." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "#### Detected Errors:" >> $GITHUB_STEP_SUMMARY
-            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-            grep -E "✖ [0-9]+:[0-9]+" lint_output.txt >> $GITHUB_STEP_SUMMARY || echo "No specific errors captured." >> $GITHUB_STEP_SUMMARY
-            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "<details><summary>🔍 Lint Output</summary>" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "If these are expected issues, consider adding appropriate lint ignore directives." >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat lint_output.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "</details>" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "If these are expected issues, add appropriate \`lint ignore\` directives to \`README.md\`." >> $GITHUB_STEP_SUMMARY
           fi
-          
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "🔗 Useful Links" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Workflow Run - https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY

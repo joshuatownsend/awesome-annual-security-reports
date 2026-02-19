@@ -1,0 +1,286 @@
+name: Repository Integrity Validator
+
+on:
+  # Trigger after Security Reports Pipeline completes on main
+  workflow_run:
+    workflows: ["Security Reports Processing Pipeline"]
+    types: [completed]
+    branches: [main]
+
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      force_validation:
+        description: 'Force validation even if no files changed'
+        required: false
+        default: false
+        type: boolean
+
+  # Weekly scheduled validation
+  schedule:
+    - cron: '0 13 * * 1'  # Monday 8:00 AM ET
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  validate-repository:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Need at least 2 commits to detect changes
+
+      - name: Check if validation is needed
+        id: check_changes
+        run: |
+          echo "Checking if validation is needed..."
+
+          # Force validation if manually triggered with force flag
+          if [ "${{ github.event.inputs.force_validation }}" == "true" ]; then
+            echo "needs_validation=true" >> $GITHUB_OUTPUT
+            echo "reason=manual_force" >> $GITHUB_OUTPUT
+            echo "✓ Manual force validation"
+            exit 0
+          fi
+
+          # Always validate on scheduled runs
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            echo "needs_validation=true" >> $GITHUB_OUTPUT
+            echo "reason=scheduled" >> $GITHUB_OUTPUT
+            echo "✓ Scheduled validation"
+            exit 0
+          fi
+
+          # For manual dispatch without force flag
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "needs_validation=true" >> $GITHUB_OUTPUT
+            echo "reason=manual" >> $GITHUB_OUTPUT
+            echo "✓ Manual validation"
+            exit 0
+          fi
+
+          # For workflow_run: check triggering workflow outcome and whether files changed
+          if [ "${{ github.event_name }}" == "workflow_run" ]; then
+            if [ "${{ github.event.workflow_run.conclusion }}" != "success" ]; then
+              echo "needs_validation=false" >> $GITHUB_OUTPUT
+              echo "reason=pipeline_failed" >> $GITHUB_OUTPUT
+              echo "⊘ Pipeline did not succeed, skipping validation"
+              exit 0
+            fi
+
+            # Check for changes in monitored directories since last commit
+            CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep -E '^(Annual Security Reports|Markdown Conversions)/' || true)
+
+            if [ -z "$CHANGED_FILES" ]; then
+              echo "needs_validation=false" >> $GITHUB_OUTPUT
+              echo "reason=no_changes" >> $GITHUB_OUTPUT
+              echo "⊘ No files changed in monitored directories"
+            else
+              echo "needs_validation=true" >> $GITHUB_OUTPUT
+              echo "reason=files_changed" >> $GITHUB_OUTPUT
+              echo "✓ Files changed in monitored directories:"
+              echo "$CHANGED_FILES" | head -10
+            fi
+            exit 0
+          fi
+
+          # Default: validate
+          echo "needs_validation=true" >> $GITHUB_OUTPUT
+          echo "reason=default" >> $GITHUB_OUTPUT
+
+      - name: Load validation configuration
+        id: load_config
+        if: steps.check_changes.outputs.needs_validation == 'true'
+        run: |
+          VALIDATE_TOC=$(jq -r '.workflow.validation.validate_toc' .github/artifacts/workflow-config.json)
+          VERIFY_CONVERSIONS=$(jq -r '.workflow.validation.verify_conversions' .github/artifacts/workflow-config.json)
+
+          echo "validate_toc=$VALIDATE_TOC" >> $GITHUB_OUTPUT
+          echo "verify_conversions=$VERIFY_CONVERSIONS" >> $GITHUB_OUTPUT
+
+          echo "✓ Loaded validation configuration"
+          echo "  Validate TOC: $VALIDATE_TOC"
+          echo "  Verify conversions: $VERIFY_CONVERSIONS"
+
+      - name: Setup Python
+        if: steps.check_changes.outputs.needs_validation == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        if: steps.check_changes.outputs.needs_validation == 'true'
+        run: |
+          pip install --break-system-packages "pypdf[crypto]"
+
+      - name: Run validation
+        id: validator
+        if: steps.check_changes.outputs.needs_validation == 'true'
+        run: |
+          python .github/scripts/validate-repository.py \
+            --artifacts-dir .github/artifacts \
+            --output-report validation_report.md
+          echo "validation_exit=$?" >> $GITHUB_OUTPUT
+
+      - name: Check validation results
+        id: check_results
+        if: steps.check_changes.outputs.needs_validation == 'true'
+        run: |
+          if grep -q "⚠️ Issues Found" validation_report.md 2>/dev/null; then
+            echo "has_issues=true" >> $GITHUB_OUTPUT
+            ISSUE_COUNT=$(grep -c "^- " validation_report.md || echo "unknown")
+            echo "issue_count=$ISSUE_COUNT" >> $GITHUB_OUTPUT
+            echo "⚠️ Validation found issues"
+          else
+            echo "has_issues=false" >> $GITHUB_OUTPUT
+            echo "issue_count=0" >> $GITHUB_OUTPUT
+            echo "✅ No issues found"
+          fi
+
+      - name: Upload validation report
+        if: steps.check_changes.outputs.needs_validation == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report-${{ github.run_id }}
+          path: validation_report.md
+          retention-days: 30
+
+      - name: Check for existing open issue
+        id: check_issue
+        if: steps.check_changes.outputs.needs_validation == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING=$(gh issue list \
+            --search "Repository Integrity Validation in:title" \
+            --state open \
+            --label "maintenance,automated-check" \
+            --json number \
+            --jq '.[0].number')
+
+          if [ -z "$EXISTING" ]; then
+            echo "issue_number=" >> $GITHUB_OUTPUT
+            echo "No existing open validation issue"
+          else
+            echo "issue_number=$EXISTING" >> $GITHUB_OUTPUT
+            echo "Found existing issue #$EXISTING"
+          fi
+
+      - name: Create or update issue on failure
+        if: |
+          steps.check_changes.outputs.needs_validation == 'true' &&
+          steps.check_results.outputs.has_issues == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_NUM="${{ steps.check_issue.outputs.issue_number }}"
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          cat > issue_body.md << EOF
+          ## ⚠️ Repository Integrity Issues Detected
+
+          The automated repository validator has detected inconsistencies that require attention.
+
+          **Run Details:**
+          - Workflow Run: [#${{ github.run_id }}]($RUN_URL)
+          - Trigger: ${{ steps.check_changes.outputs.reason }}
+          - Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          ---
+
+          EOF
+
+          cat validation_report.md >> issue_body.md
+
+          if [ -z "$ISSUE_NUM" ]; then
+            gh issue create \
+              --title "⚠️ Repository Integrity Validation - Issues Found" \
+              --body-file issue_body.md \
+              --label "maintenance,automated-check" \
+              --assignee jacobdjwilson
+            echo "✓ Created new issue"
+          else
+            gh issue comment "$ISSUE_NUM" \
+              --body-file issue_body.md
+            echo "✓ Updated existing issue #$ISSUE_NUM"
+          fi
+
+      - name: Close resolved issues
+        if: |
+          steps.check_changes.outputs.needs_validation == 'true' &&
+          steps.check_results.outputs.has_issues == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          ISSUES=$(gh issue list \
+            --state open \
+            --label "maintenance,automated-check" \
+            --search "Repository Integrity Validation" \
+            --json number \
+            --jq '.[].number')
+
+          if [ -z "$ISSUES" ]; then
+            echo "No open validation issues to close"
+          else
+            for ISSUE in $ISSUES; do
+              echo "Closing resolved issue #$ISSUE"
+              gh issue close "$ISSUE" \
+                --comment "✅ All validation checks passed in [run #${{ github.run_id }}]($RUN_URL). Repository integrity confirmed."
+            done
+          fi
+
+      - name: Generate step summary
+        if: always()
+        run: |
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          REASON="${{ steps.check_changes.outputs.reason }}"
+          NEEDED="${{ steps.check_changes.outputs.needs_validation }}"
+
+          echo "## 📋 Repository Integrity Validator" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Run | [#${{ github.run_id }}]($RUN_URL) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Trigger | \`${{ github.event_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Reason | \`${REASON:-n/a}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$NEEDED" != "true" ]; then
+            echo "### ⊘ Validation Skipped" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            case "$REASON" in
+              no_changes)
+                echo "No files changed in \`Annual Security Reports/\` or \`Markdown Conversions/\` — nothing to validate." >> $GITHUB_STEP_SUMMARY
+                ;;
+              pipeline_failed)
+                echo "The Security Reports Pipeline did not complete successfully — skipping validation." >> $GITHUB_STEP_SUMMARY
+                ;;
+              *)
+                echo "Validation was not required for this run." >> $GITHUB_STEP_SUMMARY
+                ;;
+            esac
+          elif [ "${{ steps.check_results.outputs.has_issues }}" == "true" ]; then
+            echo "### ⚠️ Issues Detected" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Repository integrity issues were found. A GitHub issue has been created or updated." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "<details><summary>📄 Validation Report</summary>" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            head -n 40 validation_report.md >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "</details>" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "📎 Full report available in [workflow artifacts]($RUN_URL)." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ✅ Validation Passed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "All PDF ↔ Markdown pairs are consistent and repository structure is valid." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "📎 Full report available in [workflow artifacts]($RUN_URL)." >> $GITHUB_STEP_SUMMARY
+          fi
