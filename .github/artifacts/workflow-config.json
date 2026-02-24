@@ -15,11 +15,12 @@
       "python_packages": [
         "markitdown[pdf,ocr]",
         "pypdf[crypto]",
-        "google-generativeai",
+        "google-genai",
         "google-ai-generativelanguage",
         "Pillow",
         "pytesseract"
-      ]
+      ],
+      "max_age_days": 90
     },
     "pull_request": {
       "branch_prefix": "security-reports-update-",
@@ -35,6 +36,29 @@
       "min_json_size_bytes": 10,
       "validate_toc": true,
       "verify_conversions": true
+    },
+    "analysis": {
+      "python_packages": [
+        "google-genai",
+        "google-ai-generativelanguage"
+      ]
+    },
+    "folders": {
+      "pdf_source": "Annual Security Reports",
+      "markdown_conversions": "Markdown Conversions"
+    },
+    "virustotal": {
+      "api_base_url": "https://www.virustotal.com/api/v3",
+      "user_agent": "VirusTotal GitHub Action",
+      "large_file_threshold_mb": 32,
+      "poll_attempts": 5,
+      "poll_backoff_base_seconds": 10,
+      "rate_limit_sleep_seconds": 15,
+      "skip_on_schedule": false,
+      "skip_on_push": false,
+      "python_packages": [
+        "requests"
+      ]
     }
   }
 }
