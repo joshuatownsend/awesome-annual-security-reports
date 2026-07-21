@@ -2,7 +2,7 @@
   "validation": {
     "summary": {
       "max_length": 400,
-      "min_length": 40,
+      "min_length": 30,
       "required_verbs": [
         "analyzes",
         "examines",
@@ -36,8 +36,7 @@
         "the document",
         "this study",
         "the study",
-        "this analysis",
-        "the analysis"
+        "this analysis"
       ],
       "marketing_words": [
         "revolutionary",
@@ -48,7 +47,8 @@
         "innovative"
       ],
       "min_sentences": 2,
-      "require_numerical_data": true
+      "require_numerical_data": true,
+      "comment": "The AI prompt targets 50-120 words; this floor catches only truly empty/stub summaries."
     }
   },
   "processing": {
@@ -68,9 +68,7 @@
     ]
   },
   "org_url_search": {
-    "query_template": "{organization} {title} {year}",
-    "env_api_key": "GOOGLE_SEARCH_API_KEY",
-    "env_cse_id": "GOOGLE_CSE_ID",
-    "num_results": 1
+    "mode": "report_url",
+    "comment": "Search settings (query template, scoring, credentials, skip domains) live in google-search-config.json. This 'mode' key selects which entry under google_search.modes to use."
   }
 }

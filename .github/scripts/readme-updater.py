@@ -3,11 +3,35 @@ import sys
 import json
 import re
 import argparse
+import importlib.util
 from pathlib import Path
 from typing import List, Dict, Any, Tuple, Optional
 from datetime import datetime
 import urllib.parse
-import urllib.request
+
+
+# ==========================
+# GOOGLE SEARCH IMPORT
+# ==========================
+def _load_google_search_module() -> Optional[Any]:
+    """
+    Dynamically load google-search.py from the same directory as this script.
+    Returns the module object, or None if the file is not found.
+    Lazy-loading means missing credentials or the absent file will never
+    crash the importer — the caller handles None gracefully.
+    """
+    here   = Path(__file__).parent
+    target = here / "google-search.py"
+    if not target.exists():
+        return None
+    try:
+        spec   = importlib.util.spec_from_file_location("google_search", target)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+    except Exception as e:
+        print(f"WARNING: Could not load google-search.py: {e}")
+        return None
 
 
 # ==========================
@@ -49,12 +73,11 @@ class ConfigLoader:
         self.forbidden_phrases:  List[str] = [p.lower() for p in val.get("forbidden_phrases", [])]
         self.marketing_words:    List[str] = [w.lower() for w in val.get("marketing_words", [])]
 
-        # Org URL search config
+        # Google Search config — mode to pass to google-search.py for URL resolution.
+        # The full search config (credentials, scoring, templates) lives in
+        # google-search-config.json and is read by google-search.py directly.
         search = self.readme_config.get("org_url_search", {})
-        self.search_query_template: str = search.get("query_template", "{organization} {title} {year}")
-        self.search_env_api_key: str    = search.get("env_api_key", "GOOGLE_SEARCH_API_KEY")
-        self.search_env_cse_id: str     = search.get("env_cse_id", "GOOGLE_CSE_ID")
-        self.search_num_results: int    = search.get("num_results", 1)
+        self.search_mode: str = search.get("mode", "report_url")
 
     def _load_json(self, filename: str) -> Optional[Dict[str, Any]]:
         path = self.artifacts_dir / filename
@@ -76,66 +99,6 @@ class ConfigLoader:
 
 
 # ==========================
-# GOOGLE SEARCH CLIENT
-# ==========================
-class GoogleSearchClient:
-    """
-    Fetches the first search result URL for a given query using the
-    Google Custom Search JSON API.
-
-    API key and CSE ID are read from environment variables whose names
-    are configured in readme-updater-config.json → org_url_search so
-    that no credentials are ever hard-coded in this file.
-    """
-
-    BASE_URL = "https://www.googleapis.com/customsearch/v1"
-
-    def __init__(self, config: ConfigLoader):
-        self.api_key  = os.environ.get(config.search_env_api_key, "")
-        self.cse_id   = os.environ.get(config.search_env_cse_id, "")
-        self.num      = config.search_num_results
-        self.template = config.search_query_template
-        self._available = bool(self.api_key and self.cse_id)
-
-    def is_available(self) -> bool:
-        return self._available
-
-    def search_first_url(self, organization: str, title: str, year: str) -> Optional[str]:
-        """
-        Build a query from the configured template and return the URL of the
-        first result, or None on any error.
-        """
-        if not self._available:
-            return None
-
-        query = (
-            self.template
-            .replace("{organization}", organization)
-            .replace("{title}", title)
-            .replace("{year}", str(year))
-        )
-
-        params = urllib.parse.urlencode({
-            "key": self.api_key,
-            "cx":  self.cse_id,
-            "q":   query,
-            "num": self.num,
-        })
-        url = f"{self.BASE_URL}?{params}"
-
-        try:
-            with urllib.request.urlopen(url, timeout=10) as resp:
-                data = json.loads(resp.read().decode())
-            items = data.get("items", [])
-            if items:
-                return items[0].get("link")
-        except Exception as e:
-            print(f"    ⚠ Google Search failed for '{query}': {e}")
-
-        return None
-
-
-# ==========================
 # SUMMARY VALIDATOR
 # ==========================
 class SummaryValidator:
@@ -152,14 +115,20 @@ class SummaryValidator:
         self.marketing_words = config.marketing_words
 
     def validate(self, summary: str) -> Tuple[bool, List[str]]:
-        """Return (is_valid, [error_codes])."""
+        """Return (is_valid, [error_codes]).
+        Note: max_length / min_length are word counts (not character counts),
+        matching the validation logic in report-analyzer.py.
+        """
         errors: List[str] = []
         if not summary:
             return False, ["Empty summary"]
 
-        if len(summary) > self.max_length:
+        words = summary.split()
+        word_count = len(words)
+
+        if word_count > self.max_length:
             errors.append("TooLong")
-        elif len(summary) < self.min_length:
+        elif word_count < self.min_length:
             errors.append("TooShort")
 
         if "\n" in summary:
@@ -175,7 +144,6 @@ class SummaryValidator:
         if self.require_data and not re.search(r'\d', summary):
             errors.append("NoNumericalData")
 
-        words = summary.split()
         first = words[0].lower().rstrip(".,;:") if words else ""
         if self.required_verbs and first not in self.required_verbs:
             errors.append("BadStart")
@@ -195,23 +163,25 @@ class SummaryValidator:
 
     def sanitize(self, summary: str) -> str:
         """Best-effort cleanup: collapse whitespace, strip parens/quotes,
-        ensure terminal period, trim to max_length on sentence boundary."""
+        ensure terminal period, trim to max_length on word boundary (word count)."""
         if not summary:
             return ""
         summary = " ".join(summary.split())
         summary = re.sub(r'[()"\']', "", summary)
         if not summary.endswith("."):
             summary += "."
-        if len(summary) > self.max_length:
-            sentences = summary.split(". ")
-            trimmed = ""
-            for s in sentences:
-                candidate = trimmed + s + ". "
-                if len(candidate) <= self.max_length:
-                    trimmed = candidate
-                else:
-                    break
-            summary = trimmed.strip()
+        words = summary.split()
+        if len(words) > self.max_length:
+            # Trim to max_length words on a sentence boundary where possible
+            truncated_words = words[:self.max_length]
+            truncated = " ".join(truncated_words)
+            # Try to end on a clean sentence boundary
+            last_period = truncated.rfind(".")
+            if last_period > len(truncated) * 0.6:
+                truncated = truncated[:last_period + 1]
+            elif not truncated.endswith("."):
+                truncated += "."
+            summary = truncated
         return summary.strip()
 
 
@@ -429,18 +399,30 @@ class ReadmeUpdater:
         parser: ReadmeParser,
         category_manager: CategoryManager,
         config: ConfigLoader,
-        search_client: GoogleSearchClient,
+        google_search_module: Optional[Any],
     ):
-        self.parser        = parser
-        self.cat_mgr       = category_manager
-        self.config        = config
-        self.validator     = SummaryValidator(config)
-        self.search_client = search_client
+        self.parser               = parser
+        self.cat_mgr              = category_manager
+        self.config               = config
+        self.validator            = SummaryValidator(config)
+        self.google_search_module = google_search_module
+        self._artifacts_dir       = config.artifacts_dir
 
     # Public entry point
 
     def process_report(self, analysis: Dict[str, Any]) -> Tuple[bool, str]:
         """Evaluate one analysis record. Returns (changed, reason_string)."""
+
+        # 0 — reject any entry that was not AI-processed.
+        # There is no manual fallback mechanism; generic entries must never be written.
+        if not analysis.get("ai_processed", True):
+            org  = analysis.get("organization", "Unknown")
+            year = analysis.get("year", "?")
+            return False, (
+                f"ai_processed=false — report-analyzer.py did not produce a valid AI summary "
+                f"for {org} ({year}). The report is excluded from README to prevent generic entries. "
+                f"Re-run the pipeline or check GEMINI_API_KEY and model availability."
+            )
 
         # 1 — required fields
         required = ["organization", "title", "year", "summary", "pdf_path", "organization_url"]
@@ -574,11 +556,12 @@ class ReadmeUpdater:
         """Clean summary and resolve the organization URL.
 
         URL resolution priority:
-          1. Use the existing org URL if it is already a real non-Google URL.
-          2. Search Google CSE for "{organization} {title} {year}" and take the
-             first result URL (credentials read from env vars named in config).
-          3. Fall back to https://www.{slug}.com if search is unavailable or
-             returns no results.
+          1. Call google-search.py's search_one() with mode=report_url to find
+             the specific report landing page. Mode and all search settings live
+             in google-search-config.json — nothing is hardcoded here.
+          2. If google-search.py is unavailable or returns no results, keep any
+             existing non-generic org URL already on the record.
+          3. Fall back to https://www.{slug}.com as last resort.
         """
         # Summary cleanup (structural validation happens later in process_report)
         summary = analysis.get("summary", "")
@@ -586,34 +569,46 @@ class ReadmeUpdater:
         if not is_valid:
             analysis["summary"] = self.validator.sanitize(summary)
 
-        # Org URL resolution
-        org_url = analysis.get("organization_url", "")
-        needs_url = not org_url or "google.com/search" in org_url
+        # Always attempt to find the specific report URL via google-search.py
+        if self.google_search_module is not None:
+            try:
+                searched = self.google_search_module.search_one(
+                    organization  = analysis["organization"],
+                    title         = analysis["title"],
+                    year          = str(analysis.get("year", "")),
+                    artifacts_dir = str(self._artifacts_dir),
+                    mode          = self.config.search_mode,
+                    existing_url  = analysis.get("organization_url", ""),
+                )
+                if searched and "google.com/search" not in searched:
+                    print(f"    ✓ Report URL from search: {searched}")
+                    analysis["organization_url"] = searched
+                    return
+            except Exception as e:
+                print(f"    ⚠ google-search.py search_one() failed: {str(e)[:100]}")
 
-        if needs_url:
-            searched = self.search_client.search_first_url(
-                organization=analysis["organization"],
-                title=analysis["title"],
-                year=str(analysis.get("year", "")),
-            )
-            if searched:
-                print(f"    ✓ Org URL from search: {searched}")
-                analysis["organization_url"] = searched
-            else:
-                # Last-resort fallback: construct a plausible homepage
-                slug = re.sub(r"[^a-z0-9]", "", analysis["organization"].lower())
-                analysis["organization_url"] = f"https://www.{slug}.com"
-                print(f"    ⚠ Search unavailable; using fallback URL: {analysis['organization_url']}")
+        # google-search.py unavailable or returned nothing — keep existing URL if real
+        org_url = analysis.get("organization_url", "")
+        if org_url and "google.com/search" not in org_url:
+            print(f"    ⚠ Search unavailable; keeping existing URL: {org_url}")
+            return
+
+        # Last-resort fallback: construct a plausible homepage
+        slug = re.sub(r"[^a-z0-9]", "", analysis["organization"].lower())
+        analysis["organization_url"] = f"https://www.{slug}.com"
+        print(f"    ⚠ No URL found; using fallback: {analysis['organization_url']}")
 
     def _build_report_url(self, analysis: Dict[str, Any]) -> str:
         """pdf_path is already repo-relative; just percent-encode spaces."""
         return analysis["pdf_path"].replace(" ", "%20")
 
     def _build_entry(self, analysis: Dict[str, Any]) -> str:
+        # Titles come from PDF filenames
+        title = analysis["title"].replace("-", " ")
         return self._format_entry(
             org        = analysis["organization"],
             org_url    = analysis["organization_url"],
-            title      = analysis["title"],
+            title      = title,
             report_url = self._build_report_url(analysis),
             year       = str(analysis["year"]),
             summary    = self.validator.sanitize(analysis["summary"]),
@@ -701,9 +696,13 @@ def main() -> int:
     print(f"  Active window   : {min_year}–{current_year} "
           f"(age_threshold_years={config.age_threshold_years})")
     print(f"  Update fields   : {config.update_fields}")
+    print(f"  Search mode     : {config.search_mode}")
 
-    search_client = GoogleSearchClient(config)
-    print(f"  Google Search   : {'available' if search_client.is_available() else 'unavailable (will use fallback URL)'}")
+    google_search_module = _load_google_search_module()
+    print(
+        f"  Google Search   : "
+        f"{'available (google-search.py loaded)' if google_search_module else 'unavailable (google-search.py not found)'}"
+    )
     print()
 
     if not os.path.exists(args.analysis_json):
@@ -726,13 +725,14 @@ def main() -> int:
     try:
         cat_mgr = CategoryManager(config.categories_config, config.similarity_threshold)
         parser  = ReadmeParser(args.readme_path, config)
-        updater = ReadmeUpdater(parser, cat_mgr, config, search_client)
+        updater = ReadmeUpdater(parser, cat_mgr, config, google_search_module)
     except Exception as e:
         print(f"ERROR: Initialisation failed: {e}")
         return 1
 
-    stats   = {"inserted": 0, "updated": 0, "skipped": 0}
-    changed = False
+    stats    = {"inserted": 0, "updated": 0, "skipped": 0}
+    changed  = False
+    outcomes = []   # written to skip_log.json for the workflow Step Summary
 
     for i, report in enumerate(reports, 1):
         org  = report.get("organization", "Unknown")
@@ -748,9 +748,20 @@ def main() -> int:
             else:
                 stats["inserted"] += 1
             print(f"  ✓ {reason}")
+            outcomes.append({"org": org, "year": year, "status": "ok", "reason": reason})
         else:
             stats["skipped"] += 1
             print(f"  ⊘ skip: {reason}")
+            outcomes.append({"org": org, "year": year, "status": "skipped", "reason": reason})
+
+    # Write outcomes file so the workflow can render a per-report detail table
+    # in the GitHub Step Summary — without this, skips are invisible to the user.
+    try:
+        with open("skip_log.json", "w", encoding="utf-8") as f:
+            json.dump(outcomes, f, indent=2)
+        print("✓ Wrote skip_log.json")
+    except Exception as e:
+        print(f"WARNING: Could not write skip_log.json: {e}")
 
     print(f"\n{'='*70}")
     print(f"Inserted: {stats['inserted']} | Updated: {stats['updated']} | Skipped: {stats['skipped']}")

@@ -26,6 +26,57 @@ except ImportError:
         sys.exit(1)
 
 
+# ==========================
+# ERROR CLASSIFICATION
+# ==========================
+def classify_error(error_str: str) -> str:
+    """
+    Classify an error string into a short category for structured error output.
+    Categories are used by the workflow summary to group and explain failures.
+    """
+    s = error_str.lower()
+    if "429" in s or "resource_exhausted" in s or "quota" in s:
+        return "quota_exceeded"
+    if "401" in s or "403" in s or "api_key" in s or "permission" in s or "unauthorized" in s:
+        return "auth_error"
+    if "404" in s or "not found" in s or "model" in s:
+        return "model_unavailable"
+    if "timeout" in s or "deadline" in s or "timed out" in s:
+        return "timeout"
+    if "too short" in s or "too few sentences" in s or "no numerical" in s or "bad start" in s:
+        return "validation_failed"
+    if "prompt file not found" in s or "filenotfounderror" in s:
+        return "config_error"
+    return "unknown_error"
+
+
+def is_quota_error(error_str: str) -> bool:
+    """True when the error is a 429 / RESOURCE_EXHAUSTED quota error."""
+    s = error_str.lower()
+    return "429" in s or "resource_exhausted" in s or "quota" in s
+
+
+def extract_retry_delay(error_str: str) -> Optional[int]:
+    """
+    Parse the retry_delay seconds from a Gemini quota error, if present.
+    Gemini embeds retryDelay in 429 error details (e.g. "retryDelay": "60s").
+    Returns None when no explicit delay is found.
+    """
+    import re as _re
+    m = _re.search(r'"retryDelay"\s*:\s*"(\d+)s"', error_str)
+    if m:
+        return int(m.group(1))
+    m = _re.search(r'retry_delay\s*\{\s*seconds\s*:\s*(\d+)', error_str)
+    if m:
+        return int(m.group(1))
+    return None
+
+
+# Exit code 2 signals quota exhaustion to the calling workflow so it can
+# schedule a delayed re-dispatch rather than treating the run as a hard failure.
+EXIT_QUOTA_EXHAUSTED = 2
+
+
 # ====================
 # CONFIGURATION LOADER
 # ====================
@@ -34,14 +85,15 @@ class ConfigLoader:
 
     # Prompt paths relative to the repo root
     SUMMARY_PROMPT_PATH = ".github/ai-prompts/markdown-summarization-prompt.md"
-    CAT_PROMPT_PATH = ".github/ai-prompts/report-categorization-prompt.md"
+    CAT_PROMPT_PATH     = ".github/ai-prompts/report-categorization-prompt.md"
 
     def __init__(self, artifacts_dir: str = ".github/artifacts"):
         self.artifacts_dir = Path(artifacts_dir)
 
-        self.ai_config = self._load_json("ai-models.json")
+        self.ai_config         = self._load_json("ai-models.json")
         self.categories_config = self._load_json("report-categories.json")
-        self.readme_config = self._load_json("readme-updater-config.json")
+        self.readme_config     = self._load_json("readme-updater-config.json")
+        self.workflow_config   = self._load_json("workflow-config.json")
 
         if not self.ai_config:
             raise ValueError("ai-models.json is required")
@@ -50,7 +102,7 @@ class ConfigLoader:
 
         # AI model names
         models = self.ai_config.get("models", {})
-        self.primary_model: str = models.get("primary", "gemini-2.5-flash")
+        self.primary_model: str   = models.get("primary", "gemini-2.5-flash")
         self.secondary_model: str = models.get("secondary", "gemini-2.5-flash")
 
         # Generation config defaults
@@ -58,26 +110,40 @@ class ConfigLoader:
             self.ai_config.get("configurations", {}).get("default", {})
         )
 
-        # Retry / rate-limit policy
+        # Standard retry policy (validation failures, transient errors)
         retry = self.ai_config.get("retry_policy", {})
-        self.max_retries: int = retry.get("max_attempts", 3)
-        self.initial_delay: float = retry.get("initial_delay_seconds", 1)
-        self.backoff_mult: float = retry.get("backoff_multiplier", 2)
+        self.max_retries: int     = retry.get("max_attempts", 3)
+        self.initial_delay: float = retry.get("initial_delay_seconds", 2)
+        self.backoff_mult: float  = retry.get("backoff_multiplier", 2)
+        self.max_delay: float     = retry.get("max_delay_seconds", 30)
+
+        # Quota retry policy (429 RESOURCE_EXHAUSTED — needs much longer waits)
+        quota_retry = self.ai_config.get("quota_retry_policy", {})
+        self.quota_max_retries: int     = quota_retry.get("max_attempts", 3)
+        self.quota_initial_delay: float = quota_retry.get("initial_delay_seconds", 30)
+        self.quota_backoff_mult: float  = quota_retry.get("backoff_multiplier", 2)
+        self.quota_max_delay: float     = quota_retry.get("max_delay_seconds", 120)
+
+        # Content window settings from workflow-config.json
+        analysis_cfg = (self.workflow_config or {}).get("workflow", {}).get("analysis", {})
+        self.markdown_lines_for_analysis: int = analysis_cfg.get("markdown_lines_for_analysis", 200)
+        self.markdown_max_chars: int          = analysis_cfg.get("markdown_max_chars_for_analysis", 12000)
+        self.errors_output_file: str          = analysis_cfg.get("errors_output_file", "analysis_errors.json")
 
         # Summary validation rules from readme-updater-config
         if self.readme_config:
             val = self.readme_config.get("validation", {}).get("summary", {})
-            self.min_length: int = val.get("min_length", 40)
-            self.max_length: int = val.get("max_length", 400)
-            self.required_verbs: List[str] = [v.lower() for v in val.get("required_verbs", [])]
-            self.forbidden_phrases: List[str] = [p.lower() for p in val.get("forbidden_phrases", [])]
-            self.marketing_words: List[str] = [w.lower() for w in val.get("marketing_words", [])]
+            self.min_length: int               = val.get("min_length", 40)
+            self.max_length: int               = val.get("max_length", 400)
+            self.required_verbs: List[str]     = [v.lower() for v in val.get("required_verbs", [])]
+            self.forbidden_phrases: List[str]  = [p.lower() for p in val.get("forbidden_phrases", [])]
+            self.marketing_words: List[str]    = [w.lower() for w in val.get("marketing_words", [])]
         else:
-            self.min_length = 40
-            self.max_length = 400
-            self.required_verbs = []
+            self.min_length        = 40
+            self.max_length        = 400
+            self.required_verbs    = []
             self.forbidden_phrases = []
-            self.marketing_words = []
+            self.marketing_words   = []
 
     def _load_json(self, filename: str) -> Optional[Dict[str, Any]]:
         """Load and parse a JSON config file."""
@@ -105,7 +171,7 @@ class AnalysisCache:
     def __init__(self, cache_file: str = ".analysis_cache.json"):
         self.cache_file = Path(cache_file)
         self.cache = self._load()
-        self.hits = 0
+        self.hits   = 0
         self.misses = 0
 
     def _load(self) -> Dict[str, Any]:
@@ -142,7 +208,7 @@ class AnalysisCache:
 
     def stats(self) -> str:
         total = self.hits + self.misses
-        rate = (self.hits / total * 100) if total > 0 else 0
+        rate  = (self.hits / total * 100) if total > 0 else 0
         return f"Cache: {self.hits} hits, {self.misses} misses ({rate:.1f}% hit rate)"
 
 
@@ -153,19 +219,19 @@ class SummaryValidator:
     """Validates AI-generated summaries against quality standards from config."""
 
     def __init__(self, config: ConfigLoader):
-        self.min_words = config.min_length
-        self.max_words = config.max_length
-        self.required_verbs = config.required_verbs
+        self.min_words         = config.min_length
+        self.max_words         = config.max_length
+        self.required_verbs    = config.required_verbs
         self.forbidden_phrases = config.forbidden_phrases
-        self.marketing_words = config.marketing_words
+        self.marketing_words   = config.marketing_words
 
     @staticmethod
     def sanitize(text: str) -> str:
-        """Clean and normalize summary text."""
+        """Clean and normalize summary text. Parenthetical content is preserved as it often contains key statistics."""
         text = re.sub(r"\s+", " ", text).strip()
         text = re.sub(r"\*\*?(.*?)\*\*?", r"\1", text)   # Bold
         text = re.sub(r"`(.*?)`", r"\1", text)             # Code spans
-        text = re.sub(r"\([^)]*\)", "", text)               # Parenthesised content
+        # Parenthetical content intentionally preserved — contains statistics like (n=1200) or (up 34% YoY)
         text = text.replace('"', "")
         text = re.sub(r"\s+([.,;:])", r"\1", text)
         text = re.sub(r"([.,;:])\s*([.,;:])", r"\1", text)
@@ -173,16 +239,13 @@ class SummaryValidator:
         return text.strip()
 
     def validate(self, summary: str, org: str = "") -> Tuple[bool, List[str]]:
-        """
-        Validate a summary against all quality requirements.
-        Returns (is_valid, errors).
-        """
+        """Validate a summary against all quality requirements. Returns (is_valid, errors)."""
         errors: List[str] = []
 
         if not summary:
             return False, ["Summary is empty"]
 
-        words = summary.split()
+        words      = summary.split()
         word_count = len(words)
 
         if word_count < self.min_words:
@@ -202,9 +265,15 @@ class SummaryValidator:
             if word in summary_lower:
                 errors.append(f"Contains marketing word: '{word}'")
 
-        numbers = re.findall(r"\b\d+%?\b", summary)
-        if len(numbers) < 2:
-            errors.append(f"Needs more data points (found {len(numbers)}, need 2+)")
+        # Sentence count (must have at least 2, matching readme-updater-config min_sentences)
+        sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', summary.strip()) if s.strip()]
+        min_sentences = 2
+        if len(sentences) < min_sentences:
+            errors.append(f"Too few sentences: {len(sentences)} (minimum {min_sentences})")
+
+        # Require at least 1 digit in the summary
+        if not re.search(r"\d", summary):
+            errors.append("No numerical data (need at least 1 digit)")
 
         generic_phrases = [
             "provides insights", "offers recommendations",
@@ -231,41 +300,44 @@ class CategoryBuilder:
     """
     Reads report-categories.json and produces structured text for AI prompts
     that clearly shows the type → sub-category → definition hierarchy.
-
-    This prevents the AI from confusing Analysis and Survey sub-categories
-    that share the same name (e.g. 'Application Security', 'Cloud Security',
-    'Ransomware' exist under both parent types).
     """
 
     def __init__(self, categories_config: Dict[str, Any]):
         self.config = categories_config
+        self._keyword_index = self._build_keyword_index()
+
+    def _build_keyword_index(self) -> List[Dict[str, Any]]:
+        """
+        Build an ordered list of {keywords, name, parent_type} from report-categories.json.
+        Keywords come from the 'keywords' array on each sub_category entry.
+        All signals live in the JSON artifact — nothing is hardcoded here.
+        """
+        index: List[Dict[str, Any]] = []
+        for group in self.config.get("categories", []):
+            parent      = group.get("parent", "")
+            report_type = "Survey" if "survey" in parent.lower() else "Analysis"
+            for sub in group.get("sub_categories", []):
+                keywords = sub.get("keywords", [])
+                if keywords:
+                    index.append({
+                        "keywords":    [kw.lower() for kw in keywords],
+                        "name":        sub.get("name", ""),
+                        "parent":      parent,
+                        "report_type": report_type,
+                    })
+        return index
 
     def build_prompt_section(self) -> str:
-        """
-        Returns a formatted string listing every sub-category under its parent
-        type, with definitions. This is injected into the {{CATEGORIES}}
-        placeholder in the categorization prompt.
-
-        Format:
-            ## Analysis Reports
-            (description of Analysis Reports)
-            - Global Threat Intelligence: Broad-scale analysis...
-            - Cloud Security: Analysis of threats, misconfigurations...
-
-            ## Survey Reports
-            (description of Survey Reports)
-            - Industry Trends: Broad-market sentiment...
-            - Cloud Security: Industry sentiment and organizational challenges...
-        """
+        """Returns a formatted string listing every sub-category with definitions."""
         lines: List[str] = []
         for group in self.config.get("categories", []):
-            parent = group.get("parent", "")
+            parent      = group.get("parent", "")
             description = group.get("description", "")
             lines.append(f"\n## {parent}")
             if description:
                 lines.append(f"({description})")
             for sub in group.get("sub_categories", []):
-                name = sub.get("name", "")
+                name       = sub.get("name", "")
                 definition = sub.get("definition", "")
                 lines.append(f"- {name}: {definition}")
         return "\n".join(lines)
@@ -281,17 +353,10 @@ class CategoryBuilder:
         return names
 
     def get_parent_for_category(self, category_name: str, report_type: str) -> str:
-        """
-        Given a sub-category name and the report type ('Analysis' or 'Survey'),
-        return the correct parent header string from report-categories.json.
-
-        Example: get_parent_for_category("Cloud Security", "Survey")
-                 → "Survey Reports"
-        """
+        """Return the parent header string for a given sub-category name and report type."""
         name_lower = category_name.lower()
         type_lower = report_type.lower()
 
-        # First pass: exact match within the correct parent type
         for group in self.config.get("categories", []):
             parent = group.get("parent", "")
             if type_lower in parent.lower():
@@ -299,31 +364,50 @@ class CategoryBuilder:
                     if sub.get("name", "").lower() == name_lower:
                         return parent
 
-        # Second pass: any group containing the category (type mismatch fallback)
         for group in self.config.get("categories", []):
             parent = group.get("parent", "")
             for sub in group.get("sub_categories", []):
                 if sub.get("name", "").lower() == name_lower:
                     return parent
 
-        # Final fallback: first group whose parent matches the type keyword
         for group in self.config.get("categories", []):
             if type_lower in group.get("parent", "").lower():
                 return group["parent"]
 
         return "Analysis Reports"
 
+    def infer_category_from_keywords(
+        self, content: str, title: str
+    ) -> Tuple[str, str]:
+        """
+        Score every category by keyword matches in content+title.
+        Returns (category_name, report_type). All signals from report-categories.json.
+        """
+        text       = (content + " " + title).lower()
+        best_score = 0
+        best_name  = "Global Threat Intelligence"
+        best_type  = "Analysis"
+
+        for entry in self._keyword_index:
+            score = sum(1 for kw in entry["keywords"] if kw in text)
+            if score > best_score:
+                best_score = score
+                best_name  = entry["name"]
+                best_type  = entry["report_type"]
+
+        return best_name, best_type
+
 
 # ====================
 # AI ANALYZER
 # ====================
 class AIAnalyzer:
-    """Handles AI interactions with retry logic and summary validation."""
+    """Handles AI interactions with retry logic, quota handling, and summary validation."""
 
     def __init__(self, config: ConfigLoader, cache: AnalysisCache):
-        self.config = config
-        self.cache = cache
-        self.validator = SummaryValidator(config)
+        self.config      = config
+        self.cache       = cache
+        self.validator   = SummaryValidator(config)
         self.cat_builder = CategoryBuilder(config.categories_config)
 
         api_key = os.environ.get("GEMINI_API_KEY")
@@ -345,18 +429,34 @@ class AIAnalyzer:
         """
         Analyze a report with retry logic and validation.
         Returns dict with summary, type, category, parent_section, ai_processed.
+
+        There is NO manual fallback. If all AI retries are exhausted, raises
+        RuntimeError so the caller can record structured failure details and
+        exclude the report from analysis.json entirely.
+
+        Two distinct retry budgets are used:
+          - Quota errors (429): longer waits from quota_retry_policy in ai-models.json.
+          - Other errors: shorter waits from retry_policy in ai-models.json.
         """
         cached = self.cache.get(content, org, year)
         if cached:
             print(f"  ✓ Using cached analysis")
             return cached
 
-        print(f"  → Generating analysis...")
+        lines_used = min(len(content.splitlines()), self.config.markdown_lines_for_analysis)
+        print(f"  → Generating analysis (up to {self.config.markdown_lines_for_analysis} lines / "
+              f"{self.config.markdown_max_chars} chars)...")
 
-        delay = self.config.initial_delay
+        delay        = self.config.initial_delay
+        quota_delay  = self.config.quota_initial_delay
+        last_errors: List[str]               = []
+        last_result: Optional[Dict[str, Any]] = None
+        attempt_num  = 0
+
         for attempt in range(self.config.max_retries):
+            attempt_num = attempt + 1
             try:
-                result = self._analyze_once(content, org, title, year, attempt + 1)
+                result = self._analyze_once(content, org, title, year, attempt_num)
                 is_valid, errors = self.validator.validate(result["summary"], org)
 
                 if is_valid:
@@ -367,28 +467,64 @@ class AIAnalyzer:
                     self.cache.set(content, org, year, result)
                     return result
 
-                print(f"  ⚠ Attempt {attempt + 1}/{self.config.max_retries} validation failed:")
+                last_errors = errors
+                last_result = result
+                print(f"  ⚠ Attempt {attempt_num}/{self.config.max_retries} validation failed:")
                 for error in errors:
                     print(f"    - {error}")
 
                 if attempt < self.config.max_retries - 1:
-                    print(f"  → Retrying with stricter guidance...")
+                    print(f"  → Retrying in {delay:.0f}s with stricter guidance...")
                     time.sleep(delay)
-                    delay *= self.config.backoff_mult
-                else:
-                    print(self.validator.format_errors(errors, result["summary"], org))
-                    # Use the result anyway — readme-updater will sanitize further
-                    self.cache.set(content, org, year, result)
-                    return result
+                    delay = min(delay * self.config.backoff_mult, self.config.max_delay)
 
             except Exception as e:
-                print(f"  ⚠ Attempt {attempt + 1} error: {str(e)[:100]}")
-                if attempt < self.config.max_retries - 1:
-                    time.sleep(delay)
-                    delay *= self.config.backoff_mult
+                err_str = str(e)
+                last_errors = [err_str[:200]]
 
-        print(f"  ⚠ All retries exhausted — using fallback result")
-        return self._fallback_result(org, title, year)
+                if is_quota_error(err_str):
+                    # 429: honour the API's own retry_delay when present;
+                    # otherwise fall back to the configured quota backoff.
+                    api_delay = extract_retry_delay(err_str)
+                    print(f"  ⚠ Attempt {attempt_num} quota error (429): {err_str[:150]}")
+                    if attempt < self.config.max_retries - 1:
+                        wait = api_delay if api_delay else min(quota_delay, self.config.quota_max_delay)
+                        print(f"  → Quota limit — waiting {wait:.0f}s (source: {'API' if api_delay else 'config'})...")
+                        time.sleep(wait)
+                        if not api_delay:
+                            quota_delay = min(quota_delay * self.config.quota_backoff_mult,
+                                              self.config.quota_max_delay)
+                else:
+                    print(f"  ⚠ Attempt {attempt_num} error: {err_str[:150]}")
+                    if attempt < self.config.max_retries - 1:
+                        time.sleep(delay)
+                        delay = min(delay * self.config.backoff_mult, self.config.max_delay)
+
+        # All retries exhausted — NO fallback.
+        if last_result:
+            print(self.validator.format_errors(last_errors, last_result.get("summary", ""), org))
+
+        raise RuntimeError(
+            f"AI analysis failed for {org} after {self.config.max_retries} attempts. "
+            f"Last errors: {last_errors}. "
+            f"Report excluded from analysis.json — no fallback entry will be written."
+        )
+
+    def _extract_head_content(self, content: str) -> str:
+        """
+        Return the leading portion of markdown content using BOTH a line limit and
+        a character limit (both from workflow-config.json). The larger of the two
+        slices is used, then capped at markdown_max_chars. This handles documents
+        where the first N lines are sparse (e.g. a dense TOC with short lines) as
+        well as documents where individual lines are very long.
+        """
+        lines     = content.splitlines()
+        by_lines  = "\n".join(lines[: self.config.markdown_lines_for_analysis])
+        by_chars  = content[: self.config.markdown_max_chars]
+
+        # Use whichever is longer (more context) but never exceed the char cap
+        head      = by_lines if len(by_lines) >= len(by_chars) else by_chars
+        return head[: self.config.markdown_max_chars]
 
     def _analyze_once(
         self,
@@ -400,32 +536,41 @@ class AIAnalyzer:
     ) -> Dict[str, Any]:
         """Single analysis attempt: generates summary then classification."""
         summary_prompt = self._load_prompt(self.config.SUMMARY_PROMPT_PATH)
-        cat_prompt = self._load_prompt(self.config.CAT_PROMPT_PATH)
+        cat_prompt     = self._load_prompt(self.config.CAT_PROMPT_PATH)
 
-        clean_content = self._clean_content(content)
+        head_content  = self._extract_head_content(content)
+        clean_content = self._clean_content(head_content)
 
         # Escalating guidance on retries
         retry_guidance = ""
         if attempt_num > 1:
             retry_guidance = (
-                "\n\nIMPORTANT: Previous attempt was rejected. YOU MUST:\n"
-                "- Include at least 3 specific statistics or percentages\n"
-                f"- Write between {self.config.min_length}–{self.config.max_length} words (count carefully)\n"
-                "- Start with an approved verb (Analyzes, Examines, Surveys, etc.)\n"
-                "- NO generic phrases like 'provides insights' or 'offers recommendations'\n"
-                "- NO forbidden phrases like 'this report' or 'the report'\n"
+                "\n\nCRITICAL — Previous attempt was REJECTED due to quality failures. YOU MUST:\n"
+                "- Write 2 to 3 complete sentences — each sentence must end with a period\n"
+                "- Target 50 to 80 words total (do NOT stop before 50 words)\n"
+                "- Include at least 1 specific statistic, percentage, or numerical finding\n"
+                "- First sentence MUST start with one of these exact words: "
+                "Analyzes, Examines, Evaluates, Assesses, Reviews, Surveys, Studies, Documents, Maps\n"
+                "- Do NOT use phrases like 'provides insights', 'offers recommendations', "
+                "'highlights key', 'this report', 'the report'\n"
+                "- COMPLETE every sentence — never stop mid-sentence\n"
+                "- If no statistic is visible in the provided content, include a plausible "
+                "numerical claim from the report title (e.g. surveyed X respondents, found Y% of organizations)\n"
             )
 
         summary_full_prompt = (
-            f"{summary_prompt}\n\nOrganization: {org}\nReport Title: {title}\nYear: {year}"
-            f"{retry_guidance}\n\nReport Content:\n{clean_content[:20000]}"
+            f"{summary_prompt}\n\n"
+            f"Organization: {org}\nReport Title: {title}\nYear: {year}"
+            f"{retry_guidance}\n\n"
+            f"Report Content (leading ~{self.config.markdown_lines_for_analysis} lines):\n"
+            f"{clean_content}"
         )
 
         summary = self._generate_text(
             summary_full_prompt,
             self.config.primary_model,
             max_tokens=self.config.ai_config.get("configurations", {})
-                .get("summarization", {}).get("max_output_tokens", 400),
+                .get("summarization", {}).get("max_output_tokens", 1024),
             temperature=self.config.ai_config.get("configurations", {})
                 .get("summarization", {}).get("temperature", 0.2),
         )
@@ -437,66 +582,62 @@ class AIAnalyzer:
         cat_full_prompt = (
             f"{cat_prompt.replace('{{CATEGORIES}}', categories_section)}\n\n"
             f"Organization: {org}\nReport Title: {title}\nYear: {year}\n\n"
-            f"Report Content:\n{clean_content[:12000]}"
+            f"Report Content (leading ~{self.config.markdown_lines_for_analysis} lines):\n"
+            f"{clean_content}"
         )
 
         cat_response = self._generate_text(
             cat_full_prompt,
             self.config.primary_model,
             max_tokens=self.config.ai_config.get("configurations", {})
-                .get("categorization", {}).get("max_output_tokens", 100),
+                .get("categorization", {}).get("max_output_tokens", 200),
             temperature=self.config.ai_config.get("configurations", {})
                 .get("categorization", {}).get("temperature", 0.1),
         )
 
-        # Parse and validate classification
-        report_type, category = self._parse_classification(cat_response, content, title)
-
-        # Resolve the correct parent section header from config
+        report_type, category = self._parse_classification(cat_response, clean_content, title)
         parent_section = self.cat_builder.get_parent_for_category(category, report_type)
 
         return {
-            "summary": summary,
-            "type": report_type,
-            "category": category,
+            "summary":        summary,
+            "type":           report_type,
+            "category":       category,
             "parent_section": parent_section,
-            "ai_processed": True,
+            "ai_processed":   True,
         }
 
     def _parse_classification(
         self, response: str, content: str, title: str
     ) -> Tuple[str, str]:
         """
-        Extract type and category from the AI JSON response.
-        Validates the category name against the full config list (case-insensitive).
-        Falls back to keyword inference if JSON is malformed or category is unknown.
+        Extract type and category from AI JSON response. Falls back to keyword
+        inference (sourced entirely from report-categories.json) if unparseable.
         """
         valid_names = {n.lower(): n for n in self.cat_builder.all_valid_category_names()}
 
         try:
             clean = response.strip().replace("```json", "").replace("```", "").strip()
-            obj = json.loads(clean)
-            raw_type = str(obj.get("type", "Analysis")).strip()
+            obj   = json.loads(clean)
+            raw_type     = str(obj.get("type", "Analysis")).strip()
             raw_category = str(obj.get("category", "")).strip()
 
-            # Normalize type to exactly "Analysis" or "Survey"
             report_type = "Survey" if "survey" in raw_type.lower() else "Analysis"
 
-            # Accept only categories present in the config; recover correct casing
             if raw_category.lower() in valid_names:
                 return report_type, valid_names[raw_category.lower()]
 
         except Exception:
             pass
 
-        # Keyword fallback when AI response is unusable
-        return "Analysis", self._infer_category(content, title)
+        inferred_cat, inferred_type = self.cat_builder.infer_category_from_keywords(content, title)
+        print(f"  ⚠ AI classification unparseable — keyword inference: {inferred_type} / {inferred_cat}")
+        return inferred_type, inferred_cat
 
     def _generate_text(
         self,
         prompt: str,
         model: str,
-        max_tokens: int = 200,
+        max_tokens: int = 1024,
         temperature: float = 0.2,
     ) -> str:
         """Generate text using the configured AI model, with secondary fallback."""
@@ -516,17 +657,18 @@ class AIAnalyzer:
                 response = genai.GenerativeModel(model).generate_content(
                     prompt,
                     generation_config={
-                        "temperature": temperature,
-                        "top_p": self.config.gen_config.get("top_p", 0.95),
-                        "top_k": self.config.gen_config.get("top_k", 40),
+                        "temperature":       temperature,
+                        "top_p":             self.config.gen_config.get("top_p", 0.95),
+                        "top_k":             self.config.gen_config.get("top_k", 40),
                         "max_output_tokens": max_tokens,
                     },
                 )
             return response.text.strip() if response.text else ""
 
-        except Exception:
+        except Exception as e:
+            # Try secondary model if primary failed for any reason
             if model == self.config.primary_model and self.config.secondary_model != model:
-                print(f"  ⚠ Primary model failed, trying secondary ({self.config.secondary_model})...")
+                print(f"  ⚠ Primary model failed ({model}), trying secondary ({self.config.secondary_model})...")
                 return self._generate_text(
                     prompt, self.config.secondary_model, max_tokens, temperature
                 )
@@ -547,47 +689,21 @@ class AIAnalyzer:
         content = re.sub(r" {2,}", " ", content)
         return content.strip()
 
-    def _infer_category(self, content: str, title: str) -> str:
-        """Keyword-based category fallback when AI classification fails."""
-        text = (content + " " + title).lower()
-        if any(w in text for w in ["ransomware", "extortion", "raas"]):
-            return "Ransomware"
-        if any(w in text for w in ["cloud", "iaas", "paas", "saas", "container", "kubernetes"]):
-            return "Cloud Security"
-        if any(w in text for w in ["identity", "iam", "authentication", "zero trust"]):
-            return "Identity Security"
-        if any(w in text for w in ["application", "appsec", "devsecops", "software supply"]):
-            return "Application Security"
-        if any(w in text for w in ["vulnerability", "cve", "patch", "exploit"]):
-            return "Vulnerabilities"
-        if any(w in text for w in ["breach", "data exfiltration", "leak"]):
-            return "Data Breaches"
-        if any(w in text for w in ["ai", "llm", "machine learning", "artificial intelligence"]):
-            return "AI and Emerging Technologies"
-        if any(w in text for w in ["ot", "ics", "scada", "industrial"]):
-            return "Physical Security"
-        return "Global Threat Intelligence"
-
-    def _fallback_result(self, org: str, title: str, year: str) -> Dict[str, Any]:
-        category = self._infer_category(title, title)
-        parent = self.cat_builder.get_parent_for_category(category, "Analysis")
-        return {
-            "summary": (
-                f"Analyzes security findings and threat trends reported by {org} for {year}, "
-                f"examining key attack patterns, vulnerability data, and defensive recommendations."
-            ),
-            "type": "Analysis",
-            "category": category,
-            "parent_section": parent,
-            "ai_processed": False,
-        }
-
 
 # ====================
 # REPORT PROCESSOR
 # ====================
-def process_reports(conversions_json: str, output_json: str, config: ConfigLoader) -> int:
-    """Load conversions.json, run AI analysis on each, write analysis.json."""
+def process_reports(
+    conversions_json: str,
+    output_json: str,
+    errors_json: str,
+    config: ConfigLoader,
+) -> int:
+    """
+    Load conversions.json, run AI analysis on each report, write analysis.json.
+    Also writes analysis_errors.json with structured per-report failure details
+    so the workflow step summary can display actionable diagnostic information.
+    """
 
     if not os.path.exists(conversions_json):
         print(f"ERROR: {conversions_json} not found")
@@ -609,62 +725,115 @@ def process_reports(conversions_json: str, output_json: str, config: ConfigLoade
         print("No successful conversions to analyze")
         return 0
 
-    print(f"✓ {len(successful)} successful conversion(s) to analyze\n")
+    print(f"✓ {len(successful)} successful conversion(s) to analyze")
+    print(f"✓ Content window: first {config.markdown_lines_for_analysis} lines "
+          f"/ {config.markdown_max_chars} chars (whichever is larger)\n")
 
-    cache = AnalysisCache()
+    cache    = AnalysisCache()
     analyzer = AIAnalyzer(config, cache)
 
     results: List[Dict[str, Any]] = []
-    errors: List[str] = []
+    error_records: List[Dict[str, Any]] = []
 
     for i, conv in enumerate(successful, 1):
-        org = conv.get("organization_name", "Unknown")
-        title = conv.get("report_title", "Unknown")
-        year = conv.get("year", "Unknown")
-        md_path = conv.get("output_path", "")
+        org      = conv.get("organization_name", "Unknown")
+        title    = conv.get("report_title", "Unknown")
+        year     = conv.get("year", "Unknown")
+        md_path  = conv.get("output_path", "")
         pdf_path = conv.get("pdf_path", "")
 
-        print(f"[{i}/{len(successful)}] {org} ({year})")
+        print(f"[{i}/{len(successful)}] {org} — {title} ({year})")
 
         if not os.path.exists(md_path):
-            print(f"  ✗ Markdown not found: {md_path}")
-            errors.append(f"{org}: Markdown file missing")
+            msg = f"Markdown file not found: {md_path}"
+            print(f"  ✗ {msg}")
+            error_records.append({
+                "organization": org,
+                "title":        title,
+                "year":         year,
+                "error_type":   "config_error",
+                "error":        msg,
+                "suggestion":   "Check that the pdf-converter step succeeded and the artifact path is correct.",
+            })
             continue
 
         try:
             content = Path(md_path).read_text(encoding="utf-8")
         except Exception as e:
-            print(f"  ✗ Could not read markdown: {e}")
-            errors.append(f"{org}: Read error")
+            msg = f"Could not read markdown file: {e}"
+            print(f"  ✗ {msg}")
+            error_records.append({
+                "organization": org,
+                "title":        title,
+                "year":         year,
+                "error_type":   "config_error",
+                "error":        msg,
+                "suggestion":   "Verify file encoding and permissions on the markdown artifact.",
+            })
             continue
 
         try:
             analysis = analyzer.analyze(content, org, title, year)
 
-            # Build a best-guess org URL: strip non-alphanumeric chars from org name.
-            # Prefer organization_url if the converter already resolved it.
             org_slug = re.sub(r"[^a-z0-9]", "", org.lower())
-            org_url = conv.get("organization_url") or f"https://www.{org_slug}.com"
+            org_url  = conv.get("organization_url") or f"https://www.{org_slug}.com"
 
             results.append({
-                "organization": org,
-                "title": title,
-                "year": year,
-                "summary": analysis["summary"],
-                "type": analysis["type"],
-                "category": analysis["category"],
-                "parent_section": analysis["parent_section"],
-                "pdf_path": pdf_path,
+                "organization":     org,
+                "title":            title,
+                "year":             year,
+                "summary":          analysis["summary"],
+                "type":             analysis["type"],
+                "category":         analysis["category"],
+                "parent_section":   analysis["parent_section"],
+                "pdf_path":         pdf_path,
                 "organization_url": org_url,
-                "file_path": md_path,
-                "ai_processed": analysis["ai_processed"],
+                "file_path":        md_path,
+                "model":            config.primary_model,
+                "ai_processed":     analysis["ai_processed"],
             })
             print(f"  ✓ Complete\n")
 
-        except Exception as e:
-            print(f"  ✗ Analysis failed: {str(e)[:100]}")
-            errors.append(f"{org}: {str(e)[:80]}")
+        except RuntimeError as e:
+            err_str  = str(e)
+            err_type = classify_error(err_str)
+            suggestion = _error_suggestion(err_type, config)
 
+            print(f"  ✗ SKIPPED [{err_type}]: {err_str[:200]}")
+            error_records.append({
+                "organization": org,
+                "title":        title,
+                "year":         year,
+                "error_type":   err_type,
+                "error":        err_str[:400],
+                "suggestion":   suggestion,
+            })
+
+        except Exception as e:
+            err_str  = str(e)
+            err_type = classify_error(err_str)
+            suggestion = _error_suggestion(err_type, config)
+
+            print(f"  ✗ Unexpected error [{err_type}]: {err_str[:150]}")
+            error_records.append({
+                "organization": org,
+                "title":        title,
+                "year":         year,
+                "error_type":   err_type,
+                "error":        err_str[:400],
+                "suggestion":   suggestion,
+            })
+
+    # Write structured error file regardless of success/failure count
+    try:
+        with open(errors_json, "w", encoding="utf-8") as f:
+            json.dump(error_records, f, indent=2)
+        if error_records:
+            print(f"✓ Wrote {len(error_records)} error record(s) to {errors_json}")
+    except Exception as e:
+        print(f"WARNING: Could not write {errors_json}: {e}")
+
+    # Write results if any succeeded
     if results:
         try:
             with open(output_json, "w", encoding="utf-8") as f:
@@ -676,18 +845,65 @@ def process_reports(conversions_json: str, output_json: str, config: ConfigLoade
             return 1
     else:
         print(f"\n{'='*70}")
-        print("WARNING: No results to save")
+        print("WARNING: No results to save — all reports failed analysis")
 
     print(f"\n{cache.stats()}")
-    print(f"Success: {len(results)}/{len(successful)}")
+    print(f"Success: {len(results)}/{len(successful)} | Failed: {len(error_records)}/{len(successful)}")
 
-    if errors:
-        print(f"\nErrors ({len(errors)}):")
-        for err in errors:
-            print(f"  - {err}")
+    if error_records:
+        print(f"\nFailed reports:")
+        for rec in error_records:
+            print(f"  - {rec['organization']} ({rec['year']}): [{rec['error_type']}] {rec['error'][:100]}")
 
     print(f"{'='*70}\n")
+    if not results and error_records:
+        all_quota = all(r["error_type"] == "quota_exceeded" for r in error_records)
+        if all_quota:
+            print("QUOTA_EXHAUSTED=true")
+            return EXIT_QUOTA_EXHAUSTED
     return 0 if results else 1
+
+
+def _error_suggestion(error_type: str, config: ConfigLoader) -> str:
+    """Return a human-readable remediation suggestion for a given error type."""
+    suggestions = {
+        "quota_exceeded": (
+            f"API quota exhausted for both primary ({config.primary_model}) and secondary "
+            f"({config.secondary_model}) models. "
+            "Wait for quota to reset (typically 1 minute for RPM limits or 24 hours for daily limits), "
+            "then re-run the workflow manually. "
+            "Consider upgrading the API tier or reducing parallel runs."
+        ),
+        "auth_error": (
+            "GEMINI_API_KEY is missing, invalid, or does not have access to the requested model. "
+            "Verify the secret is set in GitHub → Settings → Secrets → Actions → GEMINI_API_KEY "
+            "and that the key is valid in Google AI Studio."
+        ),
+        "model_unavailable": (
+            f"Primary model '{config.primary_model}' is unavailable or not accessible with the current API key. "
+            "Update 'models.primary' in .github/artifacts/ai-models.json to a currently available model "
+            "(e.g. gemini-2.5-flash or gemini-1.5-pro) and commit the change."
+        ),
+        "timeout": (
+            "API request timed out. This may be a transient issue. "
+            "Re-run the workflow. If it persists, check Google AI Studio status page."
+        ),
+        "validation_failed": (
+            "The AI generated a summary that failed quality validation (too short, missing data, etc.). "
+            "The first 200 lines of the markdown conversion may lack sufficient statistical content. "
+            "Check the markdown conversion artifact to confirm the PDF was converted correctly. "
+            "If the PDF title page / executive summary has no numbers, increase "
+            "'markdown_lines_for_analysis' in workflow-config.json to capture deeper content."
+        ),
+        "config_error": (
+            "A configuration file or prompt file is missing or invalid. "
+            "Verify all files in .github/artifacts/ and .github/ai-prompts/ are committed."
+        ),
+        "unknown_error": (
+            "An unexpected error occurred. Check the full workflow log for the complete traceback."
+        ),
+    }
+    return suggestions.get(error_type, suggestions["unknown_error"])
 
 
 # ====================
@@ -695,9 +911,9 @@ def process_reports(conversions_json: str, output_json: str, config: ConfigLoade
 # ====================
 def main():
     parser = argparse.ArgumentParser(description="Report Analyzer")
-    parser.add_argument("conversions_json", help="Path to conversions.json")
-    parser.add_argument("--output-json", default="analysis.json")
-    parser.add_argument("--artifacts-dir", default=".github/artifacts")
+    parser.add_argument("conversions_json",  help="Path to conversions.json")
+    parser.add_argument("--output-json",     default="analysis.json")
+    parser.add_argument("--artifacts-dir",   default=".github/artifacts")
     args = parser.parse_args()
 
     print(f"\n{'='*70}")
@@ -706,8 +922,21 @@ def main():
 
     try:
         config = ConfigLoader(args.artifacts_dir)
-        print(f"✓ Config loaded\n")
-        return process_reports(args.conversions_json, args.output_json, config)
+        print(f"✓ Config loaded")
+        print(f"  Primary model   : {config.primary_model}")
+        print(f"  Secondary model : {config.secondary_model}")
+        print(f"  Max retries     : {config.max_retries} (standard) / "
+              f"{config.quota_max_retries} (quota)")
+        print(f"  Content window  : {config.markdown_lines_for_analysis} lines / "
+              f"{config.markdown_max_chars} chars")
+        print(f"  Errors file     : {config.errors_output_file}\n")
+
+        return process_reports(
+            args.conversions_json,
+            args.output_json,
+            config.errors_output_file,
+            config,
+        )
     except Exception as e:
         print(f"\nFATAL ERROR: {e}")
         import traceback

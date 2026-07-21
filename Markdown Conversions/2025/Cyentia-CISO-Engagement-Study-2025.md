@@ -1,246 +1,525 @@
 # 2025 CISO Engagement and Decision Drivers Study
 
-AI Dominates Security Content
-
-In partnership with
+**Organization:** Cyentia  
+**Report Title:** CISO-Engagement-Study  
+**Year:** 2025
 
 ## Table of Contents
 - [Introduction](#introduction)
 - [Research Methodology](#research-methodology)
-- [I. Content Creation & Format Trends](#i-content-creation--format-trends)
-  - [How are content asset formats changing over time?](#how-are-content-asset-formats-changing-over-time)
-  - [What asset formats are being produced vs. a year ago?](#what-asset-formats-are-being-produced-vs-a-year-ago)
-  - [How popular is digital content with sponsors?](#how-popular-is-digital-content-with-sponsors)
-  - [What proportion of assets were sponsored?](#what-proportion-of-assets-were-sponsored)
-  - [How many OT cybersecurity assets are being produced?](#how-many-ot-cybersecurity-assets-are-being-produced)
-- [II. Topic Trends & Industry Signals](#ii-topic-trends--industry-signals)
-  - [Which sponsored topics are gaining ground?](#which-sponsored-topics-are-gaining-ground)
-  - [Which sponsored content topics are fastest moving?](#which-sponsored-content-topics-are-fastest-moving)
-  - [What topics are audiences consuming?](#what-topics-are-audiences-consuming)
-  - [What asset formats perform best in each region?](#what-asset-formats-perform-best-in-each-region)
-  - [Which topics are hot in each industry?](#which-topics-are-hot-in-each-industry)
-  - [What topics matter to critical infrastructure industries?](#what-topics-matter-to-critical-infrastructure-industries)
-  - [What topics are hot today and which ones have staying power?](#what-topics-are-hot-today-and-which-ones-have-staying-power)
-  - [What asset titles resonate most?](#what-asset-titles-resonate-most)
-- [III. CISO Preferences & Persona Engagement](#iii-ciso-preferences--persona-engagement)
-  - [Which asset formats are preferred by CISOs?](#which-asset-formats-are-preferred-by-cisos)
-  - [Which specific asset titles are getting the most CISO attention?](#which-specific-asset-titles-are-getting-the-most-ciso-attention)
-  - [What roles engage with various asset formats in a single account?](#what-roles-engage-with-various-asset-formats-in-a-single-account)
-- [IV. Intent Data, AI Trends & Buyer Behavior](#iv-intent-data-ai-trends--buyer-behavior)
-  - [How has AI-related content performed since 2022?](#how-has-ai-related-content-performed-since-2022)
-  - [How has engagement with AI-related content changed recently?](#how-has-engagement-with-ai-related-content-changed-recently)
-  - [What topics see the highest engagement from small and medium-sized businesses?](#what-topics-see-the-highest-engagement-from-small-and-medium-sized-businesses)
-  - [How does event attendance impact content engagement in an organization?](#how-does-event-attendance-impact-content-engagement-in-an-organization)
-  - [How does engagement with IT and OT topics compare?](#how-does-engagement-with-it-and-ot-topics-compare)
-  - [Does daily user engagement differ for sponsored vs. non-sponsored editorial content?](#does-daily-user-engagement-differ-for-sponsored-vs-non-sponsored-editorial-content)
+- [Section I: Content Creation & Format Trends](#section-i-content-creation--format-trends)
+- [Section II: Topic Trends & Industry Signals](#section-ii-topic-trends--industry-signals)
+- [Section III: CISO Preferences & Persona Engagement](#section-iii-ciso-preferences--persona-engagement)
+- [Section IV: Intent Data, AI Trends & Buyer Behavior](#section-iv-intent-data-ai-trends--buyer-behavior)
 - [Looking Ahead](#looking-ahead)
 
-***
+---
 
-# Introduction
+## Introduction
 
-In B2B cybersecurity marketing, precision wins. This report digs into exclusive content consumption patterns, intent data, and topic engagement insights from ISMG’s media network to reveal where cybersecurity buyers actually devote their attention.
-
-From the topics that pull in CISOs to the content formats gaining traction around the world, this data-backed report breaks down what’s working, what’s fading, and where savvy marketers see the most impactful outcomes.
-
-Intent data — behavioral signals that reveal what buyers are researching, when, and why — gives marketers the power to engage earlier and more effectively. It brings clarity to audience needs, campaign timing, and content strategy at every stage of the funnel.
+In B2B cybersecurity marketing, precision Intent data — behavioral signals that reveal what buyers are researching, when, and why — gives marketers the power to engage earlier and more effectively. It brings clarity to audience needs, campaign timing, and content strategy at every stage of the funnel.
 
 For a more custom analysis, talk with CyberTheory. Our exclusive access to ISMG’s intent and engagement data can be leveraged into more effective marketing and content strategies, delivering the results you seek.
 
-Key findings include:
+### Key findings include:
+1. **AI topics drive the broadest interest.** Security audiences continue to seek out AI-themed content, especially when paired with clear use cases, industry context, and practical value.
+2. **OT cybersecurity content is under-supplied.** Interaction with OT topics is high, but sponsored coverage remains limited. Vendors who move early can claim attention in a growing space.
+3. **Buyers cast a wide net when researching solutions.** Most buyers are actively consuming both sponsored and non-sponsored content, including sponsored content from multiple vendors. Intent data shows what’s happening behind the scenes.
+4. **Webinars outperform other formats for CISOs.** When executive attention is the goal, webinars deliver. On-demand access and substantive insights drive performance across funnel stages.
+5. **Podcasts and video assets build mid-funnel momentum.** Trust-building formats like expert-led videos and recurring podcast series fill a critical gap between awareness and conversion.
+6. **Original research earns repeat attention, yet is underutilized.** Survey-based content remains a powerful driver of engagement. Unique data and industry insights build authority and create room for surround assets.
+7. **Whitepapers remain essential for executive decision-makers.** Long-form content still plays a vital role. When positioned strategically, whitepapers support evaluation and purchase-stage decision-making.
 
-1.  AI topics drive the broadest interest. Security audiences continue to seek out AI-themed content, especially when paired with clear use cases, industry context, and practical value.
-2.  OT cybersecurity content is under-supplied. Interaction with OT topics is high, but sponsored coverage remains limited. Vendors who move early can claim attention in a growing space.
-3.  Buyers cast a wide net when researching solutions. Most buyers are actively consuming both sponsored and non-sponsored content, including sponsored content from multiple vendors. Intent data shows what’s happening behind the scenes.
-4.  Webinars outperform other formats for CISOs. When executive attention is the goal, webinars deliver. On-demand access and substantive insights drive performance across funnel stages.
-5.  Podcasts and video assets build mid-funnel momentum. Trust-building formats like expert-led videos and recurring podcast series fill a critical gap between awareness and conversion.
-6.  Original research earns repeat attention, yet is underutilized. Survey-based content remains a powerful driver of engagement. Unique data and industry insights build authority and create room for surround assets.
-7.  Whitepapers remain essential for executive decision-makers. Long-form content still plays a vital role. When positioned strategically, whitepapers support evaluation and purchase-stage decision-making.
+---
 
-# Research Methodology
+## Research Methodology
 
 This report is based on an extensive analysis of content consumption and engagement signals from ISMG, the world’s largest B2B cybersecurity media network. The dataset spans gigabytes of behavioral data and includes interactions tied to more than 300 distinct cybersecurity topics.
 
-The insights presented here draw from five core data sources:
+### The insights presented here draw from five core data sources:
+- **ISMG’s Editorial Network**: Our portfolio of 38 online publications serving over 2 million cybersecurity professionals worldwide.
+- **ISMG Global Events**: In-person and virtual events held throughout the year.
+- **CyberEdBoard Community**: A closed community of CISOs and executive-level cybersecurity leaders from more than 1,800 organizations.
+- **CyberEd.io Platform**: An education platform offering structured cybersecurity learning paths.
+- **CyberTheory Marketing Intelligence**: Strategic marketing insights developed by CyberTheory.
 
-- ISMG’s Editorial Network — Our portfolio of 38 online publications serving over 2 million cybersecurity professionals worldwide. The network averages over 50,000 unique daily visitors and hosts more than 500,000 user interactions each day.
-- ISMG Global Events — In-person and virtual events held throughout the year, including regional summits, executive roundtables, and editorial interviews conducted live at industry events such as RSAC, InfoSec Europe, and Black Hat. Engagement data also includes OT-focused ManuSec programming.
-- CyberEdBoard Community — A closed community of CISOs and executive-level cybersecurity leaders from more than 1,800 organizations. This group provides peer-driven insight on top-of-mind challenges and trends.
-- CyberEd.io Platform — An education platform offering structured cybersecurity learning paths, executive training, hands-on labs, and certifications. Platform usage informs content interest trends by role and experience level.
-- CyberTheory Marketing Intelligence — Strategic marketing insights developed by CyberTheory, informed by the same ISMG datasets used in this report. These include advisory programs focused on campaign design, demand generation, and content performance analysis.
+![Chart showing distribution of registered accounts by company size and vertical]
 
-Audience data is further analyzed by organization size, industry, region, and role. See the charts on this page reflecting the distribution of registered accounts by company size and vertical.
+---
 
-![Chart showing Industry Breakdown of registered accounts analyzed, with Finance (11.7%), Technology (11.2%), Banking (8.8%), and Consulting (7.4%) as the top sectors.]
+## Section I: Content Creation & Format Trends
 
-![Chart showing Organization Size Breakdown of registered accounts analyzed, with Large Enterprise (>10k) at 43.1% and Enterprise (1k to 10k) at 28.9%.]
-
-## I. Content Creation & Format Trends
-
-This section dives into evolving cybersecurity content trends, providing actionable insights for marketers by unpacking a decade’s worth of asset production data.
-
-We spotlight growth in articles and video content, along with strategic opportunities emerging from our in-depth analysis of ISMG intent data. The surge in sponsored digital content, for example, underscores the importance of targeted, timely, and purposeful messaging in a saturated market.
-
-You’ll gain an understanding of seasonal patterns that drive sponsored content activity, enabling smarter planning and execution. We also highlight an untapped area of growth in operational technology (OT) cybersecurity, where editorial interest outpaces sponsored content production. Marketers positioned to fill this gap with relevant, high-value assets can secure early leadership in an increasingly critical field.
+This section dives into evolving cybersecurity content trends, providing actionable insights for marketers by unpacking a decade’s worth of asset production data. We spotlight growth in articles and video content, along with strategic opportunities emerging from our in-depth analysis of ISMG intent data.
 
 ### How are content asset formats changing over time?
+Figure 1 shows a 235% increase in total content asset production over the past 10 years. Articles and whitepapers remain the most commonly produced formats, but video has steadily grown in volume.
 
-Figure 1 shows a 235% increase in total content asset production over the past 10 years. Articles and whitepapers remain the most commonly produced formats, but video has steadily grown in volume, especially in the last three years. Podcast output, by contrast, has declined both in absolute terms and relative share. A small dip at the start of 2025 aligns with typical seasonal slowdowns seen in prior years.
+![Figure 1: Asset formats by quarter (10-year view)]
 
-![Figure 1: Chart showing Asset formats by quarter (10-year view), illustrating a 235% increase in total content assets published from 2015 Q1 to 2025 Q1. Articles and Whitepapers are the most common, while Video has grown steadily.]
+### CyberTheory Takeaways
+1. **Build content volume with purpose.** The 235% growth in asset output over 10 years reflects our now hyper-competitive content backdrop.
+2. **Reinvest in podcast strategy.** Despite strong strategic value, podcast production has declined — leaving an opening.
+3. **Use video to break through early-stage noise.** Short, expert-led videos are ideal for explaining complex topics quickly.
+4. **Anchor awareness with editorial-style articles.** Articles continue to drive top-of-funnel performance.
+5. **Repurpose whitepapers for depth and reach.** Break long-form reports into serialized assets.
 
-**CyberTheory Takeaways**
+---
 
-1.  Build content volume with purpose. The 235% growth in asset output over 10 years reflects our now hyper-competitive content backdrop. To stay visible, cybersecurity vendors must maintain a steady cadence of new, high-quality assets that align to buyer information needs across the funnel.
-2.  Reinvest in podcast strategy. Despite strong strategic value, podcast production has declined — leaving an opening. CISOs and senior leaders value recurring formats with expert voices. A well-positioned series can fill this whitespace and establish durable thought leadership.
-3.  Use video to break through early-stage noise. Video assets have gained significant traction in recent years. Short, expert-led videos are ideal for explaining complex topics quickly and helping your brand stand out in crowded digital channels.
-4.  Anchor awareness with editorial-style articles. Articles continue to drive top-of-funnel performance. Invest in paid placement articles on trusted media properties and align article themes with high-interest intent signals to earn early-stage attention.
-5.  Repurpose whitepapers for depth and reach. While still widely used, whitepapers now compete with more flexible formats. Break long-form reports into serialized assets, combine them with webinars, or pair with interactive tools to gain additional value.
+## Section II: Topic Trends & Industry Signals
 
-### What asset formats are being produced vs. a year ago?
-
-Figure 2 compares asset formats from Q4 2024 and Q1 2025 with the same period a year earlier. Article production continues to climb, extending a multi-year growth trend. Whitepapers declined modestly, showing a gradual shift away from traditional long-form formats. Video content showed a notable gain, while webinar volume appears to have stabilized following a pandemic-driven expansion. The broad “Other” category, including blog posts, surveys, and reports grew modestly, reflecting incremental diversification rather than breakout adoption. These trends suggest that while content mix is evolving, format preferences are not shifting dramatically.
-
-![Figure 2: Chart comparing Asset formats in Q4 2024 to Q1 2025 versus the previous year. Article production increased (3.3% change, 47% share), while Whitepapers declined (-5.8% change, 21% share). Video increased (1.8% change, 15% share).]
-
-**CyberTheory Takeaways**
-
-1.  Keep investing in articles, but sharpen your edge. Rising article output makes early-stage visibility harder to earn. Strong headlines and trusted placements are now table stakes.
-2.  Whitepapers remain relevant. Once front-line lead drivers, they now work best as supporting content within multi-asset campaigns.
-3.  Video is on the rise for a reason. Buyers want quick, high-credibility content that showcases expertise. Video fills that need and drives stronger mid-funnel traction.
-
-### How popular is digital content with sponsors?
-
-Figure 3 tracks the volume of sponsored content assets published each quarter over the past decade. The data reveals a sharp acceleration beginning in 2020, followed by a sustained high-volume phase through early 2025. While some seasonal variation is visible, quarterly production levels have not returned to pre-2020 (pre-COVID) norms, suggesting that elevated levels of sponsored content production have become the new norm.
-
-![Figure 3: Chart showing Sponsored assets by quarter (10-year view), indicating a sustained shift to digital assets and a 323% increase in quarterly sponsored assets from 2015 Q1 to 2025 Q1.]
-
-**CyberTheory Takeaways**
-
-1.  Sponsored content has surged, and so has the need for better content execution. The 10-year rise in sponsored content means standing out requires more than being present. Lead with a clear point of view that speaks to specific buyer concerns and stages.
-2.  Avoid contributing to content fatigue. With so many assets now in circulation, marketers must prioritize clarity, specificity, and usefulness. Generic messaging disappears fast — relevance and utility are now essential for engagement.
-3.  Treat digital content and in-person events as complementary, not competing. Figure 3 shows that digital output didn’t drop when events returned. Plan campaigns that bridge both to drive touchpoint density and cross-channel momentum.
-4.  Maximize ROI by extending the life of top-performing assets. With production volume at record highs, it’s wasteful to create one-and-done content. Repackage standout assets into new formats, gate them differently, or syndicate with fresh messaging.
-5.  Challenger brands can punch above their weight. Use differentiated formats, bold positioning, and audience segmentation, such as by industry or use case, to cut through the sponsored content volume driven by dominant players.
-
-### What proportion of assets were sponsored?
-
-Figure 4 displays the percentage of total assets that were sponsored in Q4 2024 and Q1 2025. Sponsorship levels dipped in late Q4, reflecting a typical seasonal slowdown in sponsored assets, but users still show strong engagement with non-sponsored assets throughout December. The overall Q4 increase aligns with the end-of-year push to discharge annual budgets and meet key objectives, while a second peak in March suggests a possible tie to budget resets or new-year coordinated campaign launches. The data also reveals a pattern of irregular spikes rather than a consistent trend, highlighting the campaign-driven nature of sponsored content activity during this period. While the volume of sponsored content varies throughout the year, additional data shows the overall number of sponsors publishing remains roughly consistent. That indicates many vendors cluster their campaigns around key seasonal windows.
-
-![Figure 4: Chart showing Percentage of assets sponsored, Q4 2024 – Q1 2025, with peaks in October (Q4) and March (Q1 2025), and a low point in December.]
-
-**CyberTheory Takeaways**
-
-1.  March is a prime launch window for high-priority content. The spike in sponsored content suggests this period aligns with refreshed budgets and campaign resets, which is a smart time to release flagship assets and drive visibility.
-2.  Plan ahead for October’s crowded attention cycle. Q4 consistently draws high sponsor activity as vendors leverage Cybersecurity Awareness Month in October as well as end-of-year budget cycles. To get your share, finalize assets early, secure placements, and consider high-performing topics with broad appeal.
-3.  Use January for low-noise experimentation. With fewer sponsored assets in circulation post-holidays, early Q1 offers a clean slate to test new formats, creative angles, or bolder positioning without as much competition for attention.
-4.  Build for peaks, but plan for lulls. The quarterly rhythm in Figure 4 suggests an opportunity to repurpose or resurface high-performing content during periods with less sponsored content activity, extending value while keeping interaction steady.
-5.  Sustain visibility through consistent cadence. Top-performing sponsors don’t just show up during peak seasons — they publish with discipline. A steady calendar builds recognition, relevance, and reach.
-
-### How many OT cybersecurity assets are being produced?
-
-Figure 5 compares sponsored and non-sponsored OT cybersecurity content from 2022 through Q1 2025. Non-sponsored coverage increased by 51% in 2024, with further growth in early 2025, reflecting rising editorial attention to industrial cybersecurity and critical infrastructure protection, as well as an increase in OT cybersecurity incident news. In contrast, sponsored OT content declined during the same period, marking a reversal of its prior growth trend. This divergence suggests that while public and regulatory interest in OT security is accelerating, vendor response through sponsored content has slowed, creating a gap between coverage and commercial engagement.
-
-![Figure 5: Chart showing Sponsored and non-sponsored OT content by quarter, 2022 – Q1 2025. Editorial content volume increased significantly in 2024 and 2025, while sponsored content volume declined.]
-
-**CyberTheory Takeaways**
-
-1.  OT cybersecurity is gaining traction in editorial channels. Marketers should respond with content that speaks directly to this rising interest and and leverages the market opportunity to gain visibility among OT cybersecurity buyers.
-2.  Regulations are raising the stakes. Recent mandates like NIS2, SOCI, and OTCC make OT security a priority. Position your content around risk, operational continuity, and compliance.
-3.  Tie OT messaging to real-world threats. Target industries like energy, transportation, and manufacturing with tailored language and use cases.
-4.  Capitalize on breaking news to promote OT content. Editorial spikes signal audience attention. Use syndication and ads to surface your OT assets during high-interest moments, and consider deploying a rapid response content capability to publish good, related content closely timed with incidents appearing in the news.
-
-## II. Topic Trends & Industry Signals
-
-This section delivers critical insights on sponsored content trends, highlighting those that are quickly gaining traction and those poised for sustained growth. Through detailed analysis of ISMG intent data, we identify sponsored cybersecurity themes that resonate with audiences and spotlight the fastest-moving topics marketers need to watch closely.
-
-You’ll discover which topics command the highest levels of audience engagement and learn how preferred asset formats differ by global regions, which can be used to inform more targeted, effective campaigns. We also explore topic preferences by industry, emphasizing the strategic importance of addressing unique concerns within each vertical.
-
-Finally, we differentiate between today’s hot topics and those with proven staying power, enabling marketers to invest strategically in content that consistently attracts audience attention and drives lasting impact.
+This section delivers critical insights on sponsored content trends, highlighting those that are quickly gaining traction and those poised for sustained growth.
 
 ### Which sponsored topics are gaining ground?
+Several topics appear consistently across periods, including cloud security and artificial intelligence. Notably, OT cybersecurity and identity and access management emerged as top-tier sponsored topics in the more recent period.
 
-Figure 6 compares the top sponsored content topics from two six-month periods: Q4 2024 to Q1 2025 vs. the same period one year ago. Several topics appear consistently across both periods, including cloud security and artificial intelligence. Notably, OT cybersecurity and identity and access management emerged as top-tier sponsored topics in the more recent period after ranking outside the top 15 in the prior year. Ransomware also rose significantly in rank, indicating increased sponsor attention. The all-time popularity shading shows that while some topics are consistently prominent, others are gaining momentum more recently.
+![Figure 6: Top sponsored asset topics, Q4 2024 – Q1 2025 vs. Q4 2023 – Q1 2024]
 
-![Figure 6: Table comparing Top sponsored asset topics in Q4 2024 – Q1 2025 versus Q4 2023 – Q1 2024. Recent top topics include Cloud Security (Rank 1), Ransomware (Rank 2), and Operational Technology (OT) (Rank 6), which was a new top-15 topic.]
+### CyberTheory Takeaways
+1. **AI remains a top theme.** Sponsors can anchor AI messaging in defined use cases.
+2. **Ransomware is gaining more attention.** A four-spot climb shows sponsors are re-engaging with this urgent topic.
+3. **OT security broke into the top tier.** This marks a clear shift in sponsor awareness of industrial cybersecurity.
+4. **Cloud and identity remain reliable anchor topics.**
+5. **Track topic momentum to guide content planning.**
 
-**CyberTheory Takeaways**
+---
 
-1.  AI remains a top theme. Sponsors can anchor AI messaging in defined use cases, relevant industry applications, and real-world outcomes to gain AI credibility and meet rising buyer expectations.
-2.  Ransomware is gaining more attention. A four-spot climb shows sponsors are re-engaging with this urgent topic. It pairs well with OT, cloud, or identity storylines that highlight critical risk.
-3.  OT security broke into the top tier for the first time. This marks a clear shift in sponsor awareness of industrial cybersecurity, a signal for vendors in this space to act while competition is still thin.
-4.  Cloud and identity remain reliable anchor topics. Their presence in both periods and strong all-time rankings confirm their role as go-to content themes. Refresh with new insights or formats to keep them relevant.
-5.  Track topic momentum to guide content planning. Surging topics like OT and ransomware show how fast sponsor priorities shift. Aligning campaigns with these trends can boost visibility and timing precision, so be sure to incorporate the latest topic trend intelligence into your content campaigns.
+## Section III: CISO Preferences & Persona Engagement
 
-### Which sponsored content topics are fastest moving?
+In this section, we zero in on what resonates with CISOs and other key personas. By analyzing their engagement levels with different sponsored asset titles, we uncover the language and themes most effective at capturing executive attention.
 
-Figure 7 highlights the fastest-rising sponsored content topics between Q4 2024 and Q1 2025 and the same period a year prior. AI-related topics remain dominant, with two ranking among the top ten movers. Other notable increases include Secure Service Edge (SSE), insider threats, and API security — reflecting sponsor interest in both emerging solutions and resurging risk areas. Several topics tied to infrastructure and tooling, such as observability and AI-based attacks, also appear among the top risers. This suggests that sponsor strategies are expanding beyond headline trends to include the supporting technologies required to implement and defend them.
+### Which asset formats are preferred by CISOs?
+Figure 14 compares average engagement by asset format between CISOs vs. the broader cybersecurity audience. Webinars and whitepapers show higher traction among CISOs compared to the broader audience.
 
-![Figure 7: Table listing the Top 10 fastest-rising sponsored topics in Q4 2024 – Q1 2025, including AI-Powered Cloud Next-Generation Firewalls (Rank 1), Security Service Edge (SSE) (Rank 2), and Insider Threat (Rank 3).]
+![Figure 14: engagement by asset format, CISO vs. all]
 
-**CyberTheory Takeaways**
+### CyberTheory Takeaways
+1. **Webinars and articles win with CISOs.** These formats earned the highest executive interaction.
+2. **Use short-form assets to drive CISOs to long-form content.** Infographics and checklists work best as entry points.
+3. **Apply persona insights to asset format strategies.** Use asset-type engagement data by role to gain a competitive edge.
 
-1.  AI is on the move, but it’s not alone. Two AI topics topped the list of fastest movers, but SSE, insider threats, and API security also gained ground. Expand campaign coverage to reflect how buyers are thinking beyond AI headlines.
-2.  Fast-moving topics are early indicators of sponsors’ market expectations. Monitoring topic velocity helps marketers stay one step ahead. Use this insight to align editorial calendars and thought leadership before the space becomes saturated.
-3.  Insider threats and API security are having a resurgence. These longstanding risks are regaining attention. Refresh old messaging with new context, such as AI defenses, hybrid work, third-party exposure, or identity sprawl.
-4.  Observability is rising — for good reason. It supports cloud and network resilience, application security, compliance, and more. Sponsors should lead with real-world implementation stories and use case examples to reach technical buyers and connect to broader leadership goals.
-5.  Offense and defense are converging. AI-based attacks ranked just behind AI-powered defenses. Marketers should build narratives that address both capabilities and threats to reflect how security teams actually evaluate solutions.
+---
 
-### What topics are audiences consuming?
+## Section IV: Intent Data, AI Trends & Buyer Behavior
 
-Figure 8 ranks the top 25 content topics by the percentage of users who interacted with them during Q4 2024 and Q1 2025, reflecting which topics resonated most widely with audiences across the reporting period. AI and machine learning had by far the highest user reach, and cloud security topics appear twice in the top six spots.
+*Content omitted in raw extract.*
 
-![Figure 8: Chart ranking the Percentage of audience interacting with the top 25 topics. Artificial Intelligence & Machine Learning leads at 55.7%, followed by Cloud Data Security & Resilience at 35.4% and Cyberwarfare / Nation-State Attacks at 34.0%.]
+---
 
-**CyberTheory Takeaways**
+## Looking Ahead
 
-1.  Anchor campaigns with topics reaching a high percentage of buyers. AI and machine learning themes are safe bets for front-line messaging when reach is the goal.
-2.  Classic threats still command attention. Ransomware, cloud security, and identity remain among the most-viewed topics. Their staying power makes them ideal for reinforcing risk narratives or opening buyer conversations.
-3.  Buyers are tracking both offense and defense. AI-based threats and AI-powered protections both rank high. Don’t silo your story — combine both perspectives to reflect how buyers assess risk holistically.
-4.  Evergreen topics act as a perpetual traffic magnet. Several top themes, like IAM and threat detection, have ranked highly for years. This signals that timely, high-utility content still performs.
-5.  Plan for reach, then build depth. High-reach topics pull buyers in. Use them to drive clicks, then transition to deeper mid-funnel content that educates, qualifies, and moves them forward.
+*Content omitted in raw extract.*
 
-### What asset formats perform best in each region?
+[^1]: Data derived from ISMG’s proprietary behavioral analytics platform, 2025.
 
-Figure 9 shows engagement with content formats across North, Central and South America, as well as EMEA and Asia-Pacific. While there are many similarities across the regions, these differences reflect some distinct format preferences which can help inform strategy. To standardize the data, the relative number of engagements for each region is scaled against North America, which has the highest engagement volume.
+---
 
-![Figure 9: Table showing Top asset formats by region. North America and EMEA favor Webinars (Rank 1), while LATAM, India, APAC, and ANZ favor Articles (Rank 1). Whitepapers rank highly in India, APAC, and ANZ.]
+eadline patterns. Model your content
+18. Synthetic Media & Deepfakes: Challenges and Opportunities in France
+on those structures, then sharpen messaging
+19. Strengthen Defenses with AI-Powered Threat Detection, Investigation, and Response with your unique POV and buyer focus.
+20. Why You Need Both Threat Detection And Threat Hunting: Best Defense and Offense Practices
+21. SaaS Data Protection: Are You Covered?
+22. API Security Matters: The Risks of Turning a Blind Eye
+23. Texas A&M University System Cyber Operations Drives Efficient Scaling with Tines and Elastic
+24. Emerging Cyber Threat Trends - Inside the Cloudflare Network
+25. Navigating Cloud Security in the Digital Age: Trends, Challenges, and Solutions
+Figure 15: Top 25 assets popular with CISOs
+CISO ENGAGEMENT AND DECISION DRIVERS STUDY 22
 
-**CyberTheory Takeaways**
+CISO PreFerenCeS & PerSOnA engAgemenT
+What roles engage with various asset
+formats in a single account?
+CyberTheory Takeaways
+Figure 16 examines content  1.  Prioritize contact-level insights over account-
+er
+|                                             |     | el or  |       |      | level intent data. Account activity alone can be  |                          |                          |                          |               |
+| ------------------------------------------- | --- | ------ | ----- | ---- | ------------------------------------------------- | ------------------------ | ------------------------ | ------------------------ | ------------- |
+| engagement patterns by role and             |     |        | g     |      |                                                   |                          |                          |                          |               |
+|                                             |     | e v ct | a     | al   |                                                   |                          |                          |                          |               |
+|                                             |     | L e    | n aff |      | m is l e a d                                      | i n g .   Tr a c k i n   | g   in d iv id u a l   i | n t e ra c t i o n   —   |  a c r o s s  |
+| format in a single top-10 global financial  |     | - Dir  | a     | P ot |                                                   |                          |                          |                          |               |
+|                                             |     | C      | M St  | V T  |                                                   |                          |                          |                          |               |
+|                                             |     |        |       |      | sp o n s o                                        | r e d ,   e d it o r i a | l,  a n d  e v e n t     | f o r m a t s   —   r ev | e a l s       |
+Sponsored
+institution over a 12-month period, from
+who’s active, what they care about, and when to act.
+|                                        | Whitepaper | 3 0 | 0 5 | 12 20 |     |     |     |     |     |
+| -------------------------------------- | ---------- | --- | --- | ----- | --- | --- | --- | --- | --- |
+| mid-2024 to mid-2025. The analysis is  | Downloads  |     |     |       |     |     |     |     |     |
+2.  Don’t overlook non-sponsored content. In this
+based on activity from 186 subscribers
+account, non-sponsored assets earned more
+Webinar
+| in this account, and it highlights how  | Attendance | 10 2 | 0 1 | 10 23 |     |     |     |     |     |
+| --------------------------------------- | ---------- | ---- | --- | ----- | --- | --- | --- | --- | --- |
+than 13 times the engagement of sponsored
+different organizational roles engage
+ones. Editorial behavior provides early-stage
+Total
+with sponsored versus non-sponsored  13 2 0 6 22 43 signals that can shape messaging, targeting, and
+outreach strategy. Invest in a solid PR program to
+content. Senior-level roles, including
+Non-Sponsored
+grow visibility and uptake in editorial channels.
+| VPs and C-level executives, show  |     | 181 107 | 55 10 | 170 523 |     |     |     |     |     |
+| --------------------------------- | --- | ------- | ----- | ------- | --- | --- | --- | --- | --- |
+Articles Views
+distinct preferences, particularly  3.  Tailor content and outreach by role. C-level and
+favoring non-sponsored (editorial)  Roundtable 1 2 5 0 0 8 VP contacts consistently engaged with editorial
+Registration
+articles. These roles track industry developments
+articles. The overall data reveals
+and scan headlines, making them highly responsive
+| a much higher level of interaction  | Interview Access | 0 0 | 0 1 | 1 2 |     |     |     |     |     |
+| ----------------------------------- | ---------------- | --- | --- | --- | --- | --- | --- | --- | --- |
+to native content and adjacent ad placements.
+with non-sponsored content, which
+Custom Event
+| accounts for 580 views compared to  |     | 0 0 | 5 0 | 1 6 |     |     |     |     |     |
+| ----------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+Registration
+43 views for sponsored assets. This
+| disparity underscores the importance of  | Blog Views | 12 11 | 2 0 | 10 35 |     |     |     |     |     |
+| ---------------------------------------- | ---------- | ----- | --- | ----- | --- | --- | --- | --- | --- |
+measuring target account engagement
+| across all content consumption  | Summit |     |     |     |     |     |     |     |     |
+| ------------------------------- | ------ | --- | --- | --- | --- | --- | --- | --- | --- |
+|                                 |        | 1 0 | 1 0 | 4 6 |     |     |     |     |     |
+Registration
+when the focus is on reaching key
+accounts, such as in ABM strategies.
+|     | Total | 195 120 | 68 11 | 186 580 |     |     |     |     |     |
+| --- | ----- | ------- | ----- | ------- | --- | --- | --- | --- | --- |
+Figure 16: ABm view of asset format engagement by role
+CISO ENGAGEMENT AND DECISION DRIVERS STUDY 23
 
-1.  Top format preferences vary by region. Those in North America and EMEA favor webinars, while articles draw the highest engagement in LATAM and Asia-Pacific regions. Users across India, APAC, and ANZ also engage more often with longer-form whitepapers, in contrast to a preference for blogs in the Americas and EMEA. Adjust global campaigns accordingly.
-2.  Avoid a one-size-fits-all format strategy. Releasing the same asset mix across all regions risks wasting effort. Instead, customize regional content by format, not just by language, to match how each region consumes information.
-3.  Tailor asset reuse by region to increase efficiency and impact. High-performing formats in one region, such as webinars in North America, can be reimagined as short videos or infographics for APAC, where mobile-friendly, digestible formats see strong uptake.
+Section IV
+This section explores the impact of AI In addition, we examine the correlation
+Intent Data,
+on cybersecurity content trends, offering between event attendance and content
+strategic marketing insights derived from engagement within organizations, highlighting
+detailed intent data analysis. We look at how targeted event strategies can amplify
+AI Trends &
+how AI-related content production has marketing outcomes. Engagement patterns
+surged since 2022, with recent engagement across IT and operational technology
+trends signaling areas of peak interest (OT) topics are also compared to identify
+Buyer Behavior and evolving priorities among buyers. nuanced differences in buyer behavior.
+We also spotlight content topics driving Lastly, we assess user engagement
+the highest engagement in small and with sponsored versus editorial content,
+medium-sized businesses (SMBs), helping revealing opportunities for marketers
+marketers tailor campaigns to resonate to leverage intent signals for more
+with this critical audience segment. effective outreach and lead nurturing.
+CISO ENGAGEMENT AND DECISION DRIVERS STUDY 24
 
-### Which topics are hot in each industry?
+InTenT DATA, AI TrenDS & Buyer BeHAVIOr
+How has AI-related content
+performed since 2022?
+Figure 17 tracks the volume of AI-related sponsored and non-sponsored content assets published quarterly from 2022 through
+early 2025. The chart shows three distinct phases of growth: steady adoption in 2022, a sharp acceleration beginning in Q2
+2023, and a sustained high-volume plateau through 2024 and into 2025. This pattern indicates long-term investment in AI-
+themed content and, based on engagement trends observed in earlier figures, continued opportunity for strategic expansion.
+303 300
+285
+Surging Interest
+217 221
+211
+197
+134
+83
+Pre -ChatGPT
+49
+39 39 41
+2022 2023 2024 2025
+Figure 17: AI content assets by quarter, 2022-25
+stessA
+CyberTheory Takeaways
+1. AI is the backbone of security marketing today.
+AI content volume increased more than sixfold
+from 2022 to 2024. Every major vendor now
+plays in this space, whether through AI solutions
+directly or adjacent capabilities. Producing AI
+content is ‘cybersecurity marketing 101’ in 2025.
+2. Ensure new AI content stands out. With production
+at an all-time high, sponsors need a sharper point
+Substained Enthusiasm of view that includes vertical industry relevance,
+specific use cases, or other credible differentiation.
+3. Missed the initial AI wave? If you’re entering the AI
+conversation now, go specific. Focus on secure AI
+pipelines, SOC automation, next-generation firewalls,
+or other use cases becoming more standardized.
+Develop original research and analyses tied to
+real-world outcomes. Associate AI with other high
+performing topics that offer a unique point of view.
+CISO ENGAGEMENT AND DECISION DRIVERS STUDY 25
 
-Figure 10 shows the most frequently sponsored topics across major industry sectors. AI, cloud security, cyberwarfare, and ransomware rank highly across nearly all verticals. The chart highlights both cross-industry themes and industry-specific content focus areas. In some cases, one industry has particularly high engagement on a topic compared to others, indicating a focus area to target with content, such as federal government users on AI-driven security operations. The insurance industry also shows high engagement across a range of topics, illustrating how those users need to monitor and understand a wide range of cyber threats and solutions for their customers.
+InTenT DATA, AI TrenDS & Buyer BeHAVIOr
+How has engagement with AI-related
+content changed recently?
+Figure 18 tracks weekly engagement with AI-related content from Q4 2024 through Q1 2025. Engagement went through peaks
+and valleys throughout the period, with a pronounced spike in February. This surge coincides with notable AI product launches
+and market events, indicating that timely developments can sharply elevate user interest. Interaction with AI content peaked mid-
+quarter, with weekly variation suggesting interest is cyclical. Overall, the data reflects sustained demand for AI-themed content.
+53k
+50,000
+41k
+40,000
+30,000
+23k
+20,000
+10,000
+5k
+0
+Oct Nov Dec Jan Feb Mar
+2024 2025
+Figure 18: AI content engagement by week, Q4 2024 – Q1 2025
+stnemegagnE
+CyberTheory Takeaways
+1. Capitalize on event-driven momentum. February’s
+spike followed DeepSeek’s R1 chatbot launch and
+ISMG’s virtual summit on AI and cybersecurity. Time
+your campaigns around industry moments — and be
+ready to move fast when new catalysts emerge.
+2. Don’t have an AI product? Lead with insight. Use
+thought leadership surveys to uncover your audience’s
+AI priorities and pain points. This data can power
+high-value content that drives engagement and
+positions your brand as a trusted voice in the space.
+3. Map your AI content to buyer needs. Generic
+narratives fall flat. Explore how AI applies
+to detection, automation, compliance, or
+operational outcomes, and use that framing to
+engage buyers with clear problems to solve.
+CISO ENGAGEMENT AND DECISION DRIVERS STUDY 26
 
-![Figure 10: Table showing Hot topics by industry, ranked by percentage of users interacting. Artificial Intelligence & Machine Learning leads across all listed industries (Banking, Consulting, Education, Finance, Healthcare, Fed Gov’t, Insurance, Manufacturing, Retail, Technology).]
+InTenT DATA,  AI TrenDS &  Buyer BeHAVIOr
+What topics see the highest engagement
+from small and medium-sized businesses?
+CyberTheory Takeaways
+Figure 19 ranks the top 25 content  1.  SMBs are highly engaged in AI but need relatable use
+Percent of SMB Users Interacting with the Top 25 Topics
+cases. Position AI through scenarios SMBs face daily:
+topics by engagement among small  Artificial Intelligence & Machine Learning 11.8%
+phishing detection, endpoint automation, and risk
+| and mid-sized business users, defined  | Cyberwarfare / Nation-State Attacks |     |     | 7.8% |
+| -------------------------------------- | ----------------------------------- | --- | --- | ---- |
+Ransomware 7.3% alerts. Practicality drives interaction in this segment.
+| here as organizations with 500 or  |     |     | 6.9% |     |
+| ---------------------------------- | --- | --- | ---- | --- |
+Cloud Data Security & Resilience
+Enterprise Browser Security 6.7% 2.  SMBs engage with content that solves
+fewer employees. AI-related topics
+|     |     | Cloud Security | 6.3% |     |
+| --- | --- | -------------- | ---- | --- |
+immediate problems. Focus messaging on
+lead the list, signaling that SMBs are
+Cybercrime 6.1%
+risks that directly affect daily operations.
+Government 5.9%
+actively exploring how AI can impact
+Securing SaaS & Web App Workflows 5.7%
+their operations and defenses. Other  3.  Ransomware is a universal entry point. It has high
+Data Privacy 5.7%
+Threat Detection 5.4% engagement among SMBs and across companies
+topics of high SMB engagement include
+|     | Threat Intelligence |     | 5.3% |     |
+| --- | ------------------- | --- | ---- | --- |
+of all sizes. Use it to open conversations with SMBs
+| ransomware and threat detection,  |     | Healthcare | 5.1% |     |
+| --------------------------------- | --- | ---------- | ---- | --- |
+— then extend into practical mitigation guidance.
+|     | Identity & Access Management |     | 4.6% |     |
+| --- | ---------------------------- | --- | ---- | --- |
+underscoring strong interest in
+4.5%
+Incident & Breach Response
+practical, operational security themes.  Critical Infrastructure Security 4.3% 4.  Make content easy to act on. SMB teams are
+|     |     | Threat Hunting | 4.2% |     |
+| --- | --- | -------------- | ---- | --- |
+While the report focuses on the top  often lean and resource-constrained. Assets that
+|     | Finance & Banking |     | 4.1% |     |
+| --- | ----------------- | --- | ---- | --- |
+offer simple checklists, tools, or tactical advice
+| 25 topics, more than 100 others fall  | Data Breach Notification |     | 4.0% |     |
+| ------------------------------------- | ------------------------ | --- | ---- | --- |
+HIPAA/HITECH 3.7% perform better than conceptual whitepapers.
+below the 3% engagement threshold,
+|     | AI-Driven Security Operations |     | 3.7% |     |
+| --- | ----------------------------- | --- | ---- | --- |
+highlighting how concentrated  Litigation 3.5% 5.  Avoid abstract frameworks and boardroom strategy.
+3.4%
+Fraud Risk Management SMB buyers show low interest in governance and
+SMB attention is on this core set.
+|     |     | CISO Trainings | 3.3% |     |
+| --- | --- | -------------- | ---- | --- |
+strategic planning content. Save those topics for
+|     | 3rd Party Risk Management | 3.3% |     |     |
+| --- | ------------------------- | ---- | --- | --- |
+enterprise audiences and keep SMB assets practical.
+|     |     | 112 other topics 3.0% |     |     |
+| --- | --- | --------------------- | --- | --- |
+Figure 19: Top 25 topics by SmB user engagement
+CISO ENGAGEMENT AND DECISION DRIVERS STUDY 27
 
-**CyberTheory Takeaways**
+InTenT DATA, AI TrenDS & Buyer BeHAVIOr
+How does event attendance impact content
+engagement in an organization?
+CyberTheory Takeaways
+Figure 20 examines patterns in event attendance and engagement at the organizational level. Many sponsored events are attended 1. Asset and overall engagement increase impressively
+with event attendance. This is an “ABM strategy in
+by multiple users from the same company. When one or more individuals from an organization participate, average engagement across
+a box:” sponsor events, drive key account targets
+the organization increases significantly. This pattern suggests that attendance correlates with deeper or more sustained interaction.
+to attend (with VIP travel packages if needed), then
+double down on promoting relevant content across
+those organizations’ buying committees afterward.
+2. Coordinate follow-up across titles. If a security
+architect and an executive both attend, tailor your
+Company Engagement Increase With vs. Without Summit Attendance outreach accordingly. Multi-role participation is
+enhanced by tailoring content to role levels.
+Without Attendance With Attendance
+3. Design events with team value in mind. If multiple
+attendees improve outcomes, create experiences
+Assets
+worth sharing internally — such as executive Q&As,
+practical downloads, or post-event toolkits.
+Engagements
+0% 200% 400% 600% 800% 1,000% 1,200% 1,400%
+Increase with Summit Attendance
+Figure 20: Comparing companies with at least 1 event attendee vs. those with no event attendees
+CISO ENGAGEMENT AND DECISION DRIVERS STUDY 28
 
-1.  AI leads in all industries. The imperative for marketers is clear: create content that provides value to cybersecurity buyers around the topic of AI.
-2.  Leverage other high-performing industry / topic combinations. While AI, identity, and ransomware have wide appeal, industries also reward content that reflects their use cases, specific risks, and organizational priorities.
-3.  Use identity as a bridge theme. It performs across all industries and connects easily to cloud, Zero Trust, fraud, and compliance. Shape identity-focused content around role-specific pain points to deepen impact.
-4.  Verticalized messaging beats broad positioning. A topic like AI takes on different meaning in healthcare vs. financial services. Anchor messaging in industry-specific use cases, risks, and regulatory concerns to earn buyer trust.
+InTenT DATA, AI TrenDS & Buyer BeHAVIOr
+How does engagement with IT
+and OT topics compare?
+Figure 21 compares audience
+Artificial Intelligence & Machine Learning
+engagement across content focused
+on IT versus OT security topics. This
+4.00x
+view is limited to users who have
+engaged with four or more OT assets,
+helping to isolate those with sustained
+Ransomware
+interest in operational technology. 3.00x
+Cybercrime
+Despite representing a smaller share
+of total asset volume, OT-related Cloud Security
+content generates significantly higher 2.00x Cyberwarfare / Nation-State Attacks Healthcare
+average engagement. These users Data Privacy
+Identity & Access Management
+also show strong interest in adjacent RSA Conference Government
+topics such as AI/ML, ransomware, 1.00x RSA Conference Videos
+cloud security and cybercrime. The AI-Powered SASE
+Microsoft Copilot for Security
+data suggests that OT-focused
+users, while having distinct priorities,
+0.00x
+respond to content that bridges both
+0% 20% 40% 60% 80% 100%
+technical and regulatory dimensions.
+Figure 21: engagement with IT and OT content topics
+stessA
+TO
+.v
+stessA
+fo
+tnuomA
+evitaleR
+CyberTheory Takeaways
+1. AI is a gateway topic. OT users heavily engage with
+AI/ML themes. Content that explores AI’s impact on OT
+security, from anomaly detection to automation, can
+lift engagement and signal forward-thinking strategy.
+2. Unify your messaging across IT and OT. OT-
+engaged users also consume non-OT content topics,
+such as privacy and healthcare. Bridging silos can
+increase relevance and reflect the way security
+teams evaluate threats across environments.
+3. OT content earns more attention per asset. Despite
+a lower volume of content, OT topics generate
+higher interest than their IT counterparts. The
+demand is there — the content coverage isn’t.
+4. Anchor OT content in real-world risks. High-
+performing OT assets focus on specific threats
+like asset visibility, ransomware, and control
+system vulnerabilities. Leave behind vague
+positioning in favor of operational relevance.
+Share of Users Viewing OT Content
+CISO ENGAGEMENT AND DECISION DRIVERS STUDY 29
 
-### What topics matter to critical infrastructure industries?
+InTenT DATA, AI TrenDS & Buyer BeHAVIOr
+Does daily user engagement differ for sponsored
+vs. non-sponsored editorial content?
+CyberTheory Takeaways
+Figure 22 shows an example of how 1. Use intent data to spot unseen opportunities. Non-
+Article Blog Webinar Whitepaper sponsored content drives significant interaction
+a sponsor sees engagement activity
+20000
+and reveals what buyers are engaging with beyond
+on their own sponsored assets, as
+your brand. Shape smarter go-to-market strategies
+Company X’s Sponsored Engagement by
+represented above the line. However,
+by leveraging these intent signals to identify high-
+Week on ‘Security Operations,’ Q4 2024
+they don’t see engagement with all 10000 performing content strategies and to find buyers
+other assets on that topic across currently shopping for your solution category.
+the ISMG network, shown below the
+2. Turn intent signals into tailored outreach.
+0
+line. In this case, that unseen activity
+Use contact-level intent data from editorial
+comprised 73% of engagement on the articles and other non-sponsored content to
+“security operations” topic during Q4 personalize nurture streams, guide follow-up
+10000
+messaging, and map emerging buying groups.
+2024. Without leveraging intent data,
+three out of four user engagements
+3. Make your sponsored content count. Your sponsored
+on that topic would remain invisible 20000 marketing assets, while seen less often than the
+to the company in this example. All Other Engagement on the ISMG rest, are your chance to convert topic interest into
+Network for ‘Security Operations’ excitement about your particular solution. Ensure
+30000 your assets deliver unique value, offer useful
+and prescriptive insight, and stand out through
+smart creative and buyer-centric messaging.
+40000
+Figure 22: engagement with sponsored vs. non-sponsored assets
+CISO ENGAGEMENT AND DECISION DRIVERS STUDY 30
 
-Figure 11 shows topics with the highest user engagement among the top 10 critical infrastructure industries over a six-month period. Once again, the AI/ML topic leads the way overall, as organizations seek efficiencies and AI-backed defensive capabilities while guarding against AI-driven threats. Cyberwarfare, ransomware, and cybercrime also ranked in the top 10 topics, underlining the importance for critical infrastructure organizations to address those persistent threats that can lead to costly operational disruption. Some industries also showed outsized engagement on specific topic clusters compared to other sectors. For example, financial services companies (banking and finance) operate in a highly regulated industry, and they engaged more often than others with content on fraud risk management and identity & access management, indicating unique pain points to address.
+looking Ahead
+Takeaways To Apply Immediately
+To stay competitive, cybersecurity CyberTheory works with cybersecurity 1. Use intent data to drive decisions. 5. Invest in formats that build trust. Video,
+Target topics, formats, and prospects podcast, and survey-based assets help
+vendors must act on real buyer behavior marketers to turn this intelligence into action.
+based on real buyer behavior. brands educate and differentiate.
+— not outdated assumptions. This report From shaping strategy to amplifying execution,
+highlights where attention flows, but we partner with teams to close the gap 2. Anchor content to high-performing 6. Use credible platforms to build trust.
+success depends on what you do next. between buyer signals and business outcomes. themes. Focus on AI, OT, ransomware, Editorial context and expert voices
+cloud security, and other topics help content stand out and stick.
+already earning attention.
+The most effective marketing teams use
+7. Make the most of what you already
+contact-level signals to tailor campaigns, 3. Tailor format to role and funnel stage. have. Break up large assets,
+fine-tune timing, and sharpen messaging. Match format strategy to decision-maker repurpose content, and build series
+needs — not just content length or cost. to stretch your investment.
+These insights drive impact because they
+reflect what buyers are actually doing now.
+4. Add context buyers care about. Use 8. Extend campaign impact after events.
+customer stories, timely incidents, or real- Promote content to engaged attendees
+world outcomes to improve relevance. and their teams once the event ends.
+To request a private briefing or talk strategy with our team, reach out at info@cybertheory.io.
+CISO ENGAGEMENT AND DECISION DRIVERS STUDY 31
 
-![Figure 11: Table showing Hot topics among selected critical infrastructure industries. Artificial Intelligence & Machine Learning leads overall (59.6%), followed by Cyberwarfare / Nation-State Attacks (41.0%).]
-
-**CyberTheory Takeaways**
-
-1.  AI and cyberwarfare/nation-state attacks lead critical infrastructure concerns. Content creators in these industries should show how their solutions address these issues to boost visibility and engagement.
-2.  Ransomware is getting added interest in healthcare. Sponsors can differentiate their solutions by tying ransomware prevention, identity, access, and detection strategies directly to patient safety and operational continuity.
-3.  Tailor threat narratives to each industry’s blind spots. The same risk — like ransomware — carries different stakes in healthcare vs. transportation. Reframing familiar threats for sector-specific impact creates relevance buyers can’t ignore.
-4.  Highly-regulated industries present ready content opportunities. Tie critical infrastructure compliance mandates such as NIS2, OTCC, SOCI, and NERC CIP, to the broader, high-interest topics to increase relevance.
-5.  Speak to cybersecurity buyer needs around IT/OT convergence. As topic rankings show, today’s critical infrastructure CISOs need integrated security across both IT and OT environments. Help guide the conversation through supporting content.
-
-### What topics are hot today and which ones have staying power?
-
-Figure 12 compares topic popularity in Q4 2024 and Q1 2025 against all-time activity, using a quadrant view. The top left highlights newly popular topics, such as AI-driven security operations and cloud security, which surged recently but have lower historical presence. The top right quadrant includes evergreen topics like ransomware and cybercrime that perform consistently well over time as well as in recent quarters. Topics lower on the chart rank lower in recent engagement. It’s important to watch topic trends over time, as new topic entrants may take 12 months or more to demonstrate their performance.
-
-![Figure 12: Scatter plot comparing
+About CyberTheory
+CyberTheory is a marketing advisory firm built for cybersecurity. We help
+vendors turn market signals into strategy, campaigns into results, and content
+into conversations that matter. We support some of the world’s largest
+cybersecurity and IT solution providers with end-to-end strategy, content,
+media planning, tactical execution, and more. Visit CyberTheory.io today.
+About Cyentia Institute
+Cyentia Institute delivers high-integrity, high-quality, data-driven research
+which provides meaningful marketing content for clients to drive sales
+and attain greater visibility in competitive markets. Cyentia’s partnership
+with ISMG provides robust, data-based research and analysis to help the
+cybersecurity community reduce risks and confront the latest threats.
+© 2025 CyberTheory. All rights reserved.

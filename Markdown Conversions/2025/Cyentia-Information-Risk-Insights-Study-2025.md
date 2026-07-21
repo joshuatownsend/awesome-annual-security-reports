@@ -1,242 +1,369 @@
-Information Risk
-Insights Study
-It's About Time
-
-IRIS
-
-2
-0
-2
-5
+# Information Risk Insights Study: It's About Time (IRIS 2025)
 
 ## Table of Contents
 - [Introduction](#introduction)
-- [Acknowledgements](#acknowledgements)
-- [KEY FINDINGS](#key-findings)
-- [1Q ARE SECURITY INCIDENTS BECOMING MORE COMMON?](#1q-are-security-incidents-becoming-more-common)
-  - [Are all types of incidents following the same trend?](#are-all-types-of-incidents-following-the-same-trend)
-  - [Key Risk Insight](#key-risk-insight)
-- [2Q DO INCIDENT TRENDS DIFFER ACROSS ORGANIZATIONS?](#2q-do-incident-trends-differ-across-organizations)
-  - [Key Risk Insight](#key-risk-insight-1)
-- [3Q IS THE PROBABILITY OF INCIDENTS INCREASING?](#3q-is-the-probability-of-incidents-increasing)
-  - [Key Risk Insight](#key-risk-insight-2)
-- [4Q HAVE SECURITY INCIDENTS GOTTEN MORE COSTLY?](#4q-have-security-incidents-gotten-more-costly)
-  - [Key Risk Insight](#key-risk-insight-3)
-- [5Q DO LOSS TRENDS DIFFER AMONG EVENT TYPES?](#5q-do-loss-trends-differ-among-event-types)
-  - [Key Risk Insight](#key-risk-insight-4)
-- [6Q ARE INTRUSION METHODS CHANGING OVER TIME?](#6q-are-intrusion-methods-changing-over-time)
-  - [Key Risk Insight](#key-risk-insight-5)
-- [7Q WHAT ARE WE MISSING FROM CURRENT EVENTS?](#7q-what-are-we-missing-from-current-events)
-  - [Key Risk Insight](#key-risk-insight-6)
-- [METHODOLOGY](#methodology)
-  - [Data Collection](#data-collection)
-  - [Incident Likelihood](#incident-likelihood)
-  - [Financial Losses](#financial-losses)
-- [INCIDENT PATTERN DEFINITIONS](#incident-pattern-definitions)
-- [CHARTS & TABLES FROM PRIOR IRIS STUDIES](#charts--tables-from-prior-iris-studies)
+- [Key Findings](#key-findings)
+- [Q1: Are Security Incidents Becoming More Common?](#q1-are-security-incidents-becoming-more-common)
+- [Q2: Do Incident Trends Differ Across Organizations?](#q2-do-incident-trends-differ-across-organizations)
+- [Q3: Is the Probability of Incidents Increasing?](#q3-is-the-probability-of-incidents-increasing)
+- [Q4: Have Security Incidents Gotten More Costly?](#q4-have-security-incidents-gotten-more-costly)
+- [Q5: Do Loss Trends Differ Among Event Types?](#q5-do-loss-trends-differ-among-event-types)
+- [Q6: Are Intrusion Methods Changing Over Time?](#q6-are-intrusion-methods-changing-over-time)
+- [Q7: What Are We Missing From Current Events?](#q7-what-are-we-missing-from-current-events)
+
+---
 
 ## Introduction
-Welcome to the 2025 edition of the (roughly) biennial Information Risk Insights Study (IRIS). The last one was in 2022, so it’s about time we got this to you. Thanks for your patience.
+Welcome to the 2025 edition of the (roughly) biennial Information Risk Insights Study (IRIS). Fittingly, time is of the essence in this IRIS. Not just because it’s a tad overdue, but because it’s literally about time—cyber risk trends over time, to be specific.
 
-Fittingly, time is of the essence in this IRIS. Not just because it’s a tad overdue, but because it’s literally about time—cyber risk trends over time, to be specific.
+Cybersecurity is ever-changing, and there’s an implicit assumption that risk is always increasing. But is it? We explore these questions and more by analyzing a huge historical dataset of cyber events and losses from 2008 through 2024. As always, our goal is to dispel the fog of FUD surrounding cyber risk so you can see it more clearly and manage it more effectively.
 
-Cybersecurity is ever-changing, and there’s an implicit assumption that risk is always increasing. But is it?
+**Acknowledgements**: The Cyentia Institute wishes to acknowledge and thank the Cybersecurity Division and the Office of the Chief Economist at the Cybersecurity and Infrastructure Security Agency (CISA) for sponsoring this study.
 
-Are cyber events occurring at greater frequency? Is an organization more likely to have a breach now than 15 years ago? Which types of incidents have become more common over time? Have the financial impacts of cyber events increased or decreased? Are risk factors trending the same way for all sectors and sizes of organizations?
+---
 
-We explore these questions and more by analyzing a huge historical dataset of cyber events and losses from 2008 through 2024. As always, our goal is to dispel the fog of FUD surrounding cyber risk so you can see it more clearly and manage it more effectively. Thanks for reading!
+## Key Findings
+- On average, 3,000 significant security incidents are publicly reported or discovered each quarter. That’s a 650% increase over the last 15 years.
+- Cyber events affecting smaller businesses are far more common overall, but relative to population size, the rate among the largest corporations is 620 times higher.
+- The annual probability of any given organization experiencing a cyber event has almost quadrupled since 2008.
+- Losses from a typical security incident have absolutely exploded, rising 15-fold from a median of $190K to almost $3 million.
+- Compromising user credentials remains the most common intrusion technique over the last decade.
 
-## Acknowledgements
-The Cyentia Institute wishes to acknowledge and thank the Cybersecurity Division and the Office of the Chief Economist at the Cybersecurity and Infrastructure Security Agency (CISA) for sponsoring this study. It is our sincere hope that this research will aid community efforts to manage cyber risk.
+---
 
-“Time isn't a straight line... It's all bumpy wumpy.”[^1]
-~The Eleventh Doctor
+## Q1: Are Security Incidents Becoming More Common?
+Figure 1 shows a 650% increase in the average number of incidents added to the public record each quarter in 2024 (~3,000) versus the rate set 15 years ago (~450).
 
-[^1]: “Actually, from a non-linear, non-subjective viewpoint, it's more like a big ball of wibbly-wobbly, timey-wimey stuff.” - The Tenth Doctor
+![Figure 1: Number of security incidents publicly reported or discovered each quarter]
 
-The IRIS research draws heavily upon Zywave’s (formerly Advisen) Cyber Loss Data, which contains over 150,000 security incidents[^2] and associated financial losses[^3] spanning decades. The data is compiled from publicly available sources, such as breach disclosures, public company filings, litigation details, and Freedom of Information Act requests.
+The plateau beginning in 2013 corresponds with the emergence of advanced persistent threats (APTs) that employed a “low and slow” strategy. The reacceleration circa 2019 was spurred by the rapid rise of ransomware (see Figure 2).
 
-It is the most comprehensive source of cybersecurity incidents and losses available. Additionally, Cyentia does extensive processing of this base dataset to extend and enrich it for cyber risk analysis use cases.
+![Figure 2: Relative frequency of incident patterns over time]
 
-[^2]: We use the terms security incident, cyber event, and loss event interchangeably. This refers to actual incidents that compromised the confidentiality, integrity, or availability of a firm’s information assets.
-[^3]: We use the terms losses or costs to refer to the financial consequences of incidents.
+---
 
-## KEY FINDINGS
+## Q2: Do Incident Trends Differ Across Organizations?
+Smaller businesses (<$100M annual revenue) see the biggest overall share of incidents. However, when factoring in the relative number of firms in each group, a complete reversal of fortune occurs.
 
-*   On average, 3,000 significant security incidents are publicly reported or discovered each quarter. That’s a 650% increase over the last 15 years.
-*   Cyber events affecting smaller businesses are far more common overall, but relative to population size, the rate among the largest corporations is 620 times higher.
-*   The annual probability of any given organization experiencing a cyber event has almost quadrupled since 2008.
-*   The probability of a <$1B firm suffering an incident has more than doubled, while the annual likelihood for a $100B+ organization has fallen 50%.
-*   Losses from a typical security incident have absolutely exploded, rising 15-fold from a median of $190K to almost $3 million!
-*   The cost of more extreme “tail loss” events is also up 5-fold, ballooning to $32 million.
-*   Cyber events aren’t just costing more—they’re hurting the bottom line more than ever before. We’ve seen an 8-fold increase in costs as a proportion of annual revenue.
-*   Median losses for professional services firms are up 25x over the last 15 years! Alternatively, there’s been a huge decrease in loss magnitude among retailers.
-*   Compromising user credentials remains the most common intrusion technique over the last decade, fluctuating between 43% and 60% of all incidents.
-*   Exploitation of web applications is up 6x for smaller firms, while targeting third-party relationships has doubled among large organizations.
+![Figure 3: Proportion of all incidents in each revenue tier]
+![Figure 4: Relative number of incidents to number of firms in each revenue tier]
 
-Like what you see? Join the vision!
+The Public and Management sectors are the only two that have historically exhibited a very high relative incident frequency.
 
-We intend to continue the IRIS in the future to discover even more insights for managing information risk. If you’d like to join in that effort by contributing relevant data or sponsoring research, please reach out to us via the contact form at [www.cyentia.com/iris](www.cyentia.com/iris).
+---
 
-## 1Q ARE SECURITY INCIDENTS BECOMING MORE COMMON?
+## Q3: Is the Probability of Incidents Increasing?
+Overall incident probability has almost quadrupled over the last 15 years.
 
-To many of you, the answer to this question seems so obvious that it’s hardly worth asking. But we’re not ones to let any assumption go unchallenged. As it turns out, this one is solidly backed by historical data—at least in terms of reported incidents[^4]. Figure 1 shows a 650% increase in the average number of incidents added to the public record each quarter in 2024 (~3,000) versus the rate set 15 years ago (~450).
+![Figure 6: Historical probability of a firm having an incident in the next year]
 
-But there’s a lot more going on than simply “incidents are way up!”[^5] The proliferation of large-scale data breaches combined with the rolling out of breach disclosure laws certainly drove the steady climb early in this timeframe. The plateau beginning in 2013 corresponds with the emergence of advanced persistent threats (APTs)[^6] that employed a “low and slow” rather than “smash and grab” strategy. The reacceleration circa 2019 was spurred by the rapid rise of ransomware (see Figure 2) and exacerbated by the COVID-19 pandemic. We could go on, but you get the point. These trends have reasons.
+The probability of a <$100M firm suffering a security incident has more than doubled, while the chance of a $100B+ megacorporation suffering an incident has dropped by a third over the same time frame.
 
-[^4]: This entire report is based on analyzing incidents that make their way into the public record through outward signs or impacts, mandatory reporting, voluntary disclosure, company filings, public lawsuits, etc.
-[^5]: Yes—we’re aware that the “incidents are way down” in the last quarter of 2024. But we’re fairly confident that number will go up once the reporting lag catches up and flushes all those as-yet-unknown events into the open. Spoiler alert: we test (and confirm) this in Q7.
-[^6]: To be clear, we’re not saying APT attacks started in 2013. But that’s when Mandiant’s APT1 report published and community awareness of these events ballooned. This slowed the rate of publicly reported incidents because attackers (even cybercriminals) were more discrete and much of the threat intel and incident response community was focused on APTs rather than standard cybercriminals.
+---
 
-![Line chart showing the number of security incidents publicly reported or discovered each quarter from 2008 to 2024. The chart shows a general upward trend with a plateau in the mid-2010s and a reacceleration around 2019, ending with a dip in the final quarter of 2024 attributed to reporting lag.](Image description)
-Figure 1: Number of security incidents publicly reported or discovered each quarter
-
-### Are all types of incidents following the same trend?
-
-We just mentioned the rise of ransomware, which prompts a related question: Are all types of incidents trending the same way? The crisscrossed lines in Figure 2 are sufficient for a definitive “nope,” but let’s highlight some of these trends that meaningfully impact organizations’ security strategies.
-
-The data in our analysis is clear:
-
-"NO"
-
-At the top of Figure 2, below, system intrusion (unauthorized access to systems, applications, or networks) has long reigned supreme among incident patterns[^7]. The particular techniques attackers use to infiltrate networks and systems have undoubtedly changed, but we’ll dig into that later (see Q6). For now, simply observe that the most common category of incident experienced by organizations hasn’t really changed in the last 15 years.
-
-[^7]: See Appendix B for definitions of these incident patterns.
-
-![Line chart showing the relative frequency (percentage of all incidents) of different incident patterns over time from 2009 to 2024 (rolling 12mo.). System intrusion is consistently the most frequent. Ransomware shows a sharp increase from around 2019. Accidental disclosure shows a sharp decrease over the same period. Insider misuse and physical threat show downward trends.](Image description)
-Figure 2: Relative frequency of incident patterns over time (rolling 12mo. 2009-2024)
-
-Now let’s also observe what has changed. The aforementioned rise of ransomware in recent years is, in fact, unprecedented. So is accidental disclosure’s precipitous drop over roughly the same period. We could go into far more detail on ransomware trends, but we’ve already done that in another IRIS.
-
-We’d love to think that “oopsies” as a major cause of data disclosure are a thing of the past, but we suspect human nature will reassert itself at some point.
-
-Physical threats and insider misuse show a marked downward trend over the years. Compared to more scalable remote alternatives, the “hands-on” approach to data theft has fallen out of favor. Data handling regulations and endpoint protections—such as encryption at rest—have further contributed to its decline. Insider misuse never rises above fourth place among all incident patterns, which goes against the long-standing “employees are the enemy” mentality. Sure, employees are often targeted in cyberattacks, but they’re usually not acting with malicious intent.
-
-### Key Risk Insight
-
-The data shows how fluid and contextual the cyber threat landscape really is and how important your firmographic footprint is to that, as we will show throughout this report.
-
-Quantifying that risk, especially at the board level, means understanding these patterns as time sensitive, not timeless.
-
-Today’s dominant risk may be tomorrow’s footnote, and cyber risk models need to keep pace.
-
-Further, if your security strategy isn’t recalibrating with these changes in risk, you’re planning for a past that no longer exists.
-
-~ Jack Freund
-Executive Fellow | The Cyentia Insitute
-
-If it seems like a lot more incidents are happening these days, it’s not just recency bias.
-
-The overall rate has seen more than a sixfold increase over the last 15 years.
-
-## 2Q DO INCIDENT TRENDS DIFFER ACROSS ORGANIZATIONS?
-
-This seems like another obvious answer on the surface because it’s well known that certain organizations make more attractive targets, some have poor defenses, and others are just plain unlucky. But what we’re really after here is whether there are inherent differences between different types of firms. Figure 3 attempts to open the door to that question by comparing trends across organizations grouped by their annual revenue.
-
-![Line chart showing the proportion of all incidents in each revenue tier over time from 2009 to 2024 (rolling 12mo.). Smaller businesses (<$100M) account for the largest and growing share of incidents, while larger organizations (>$1B) show a declining share.](Image description)
-Figure 3: Proportion of all incidents in each revenue tier (rolling 12mo. 2009-2024)
-
-Rebutting the “Who would attack little ‘ol us?” argument, smaller businesses (<$100M annual revenue) see the biggest overall share of incidents. What’s more, that share is growing over time. The proportion of events affecting larger organizations (>$1B annual revenue), on the other hand, appears to be declining over the last 15 years.
-
-The data in our analysis is clear: smaller businesses—those under $100M in annual revenue—account for the largest share of incidents, countering the idea that they're too minor to target.
-
-There’s more to this story, however, as astute readers have probably already discerned. The obvious objection to the prior chart’s depiction of trends is that it does not account for the number of firms that exist in each revenue tier[^8]. Sure, more incidents affect small businesses, but they vastly outnumber large corporations.[^9] What happens when we factor in the relative number of firms in each group? Figure 4 gives the answer—a complete reversal of fortune!
-
-[^8]: We use data from Dun & Bradstreet for the number of organizations in each revenue tier.
-[^9]: The Small Business Administration estimates that 99.9% of all businesses are small. [https://advocacy.sba.gov/2024/07/23/frequently-asked-questions-about-small-business-2024/](https://advocacy.sba.gov/2024/07/23/frequently-asked-questions-about-small-business-2024/)
-
-![Line chart showing the relative number of incidents compared to the number of firms in each revenue tier over time from 2009 to 2024 (rolling 12mo.). The chart shows multiples indicating how many times higher the incident rate is compared to the number of firms. Larger revenue tiers consistently show much higher multiples than smaller tiers, although the trend for the largest tiers is declining.](Image description)
-Figure 4: Relative number of incidents to number of firms in each revenue tier (rolling 12mo. 2009-2024)
-
-The multiples shown in Figure 4 compare the number of incidents across a revenue tier with the number of organizations within it. The higher the multiple, the higher the average rate of incidents per organization in each tier. While larger organizations show a declining trend in the relative number of incidents, they remain disproportionately affected by them. The $100B+ tier has experienced 620 times more incidents than the number of megacorporations in this segment. Though the smallest firms experience the largest number of incidents in absolute terms, only a fraction of them (0.53x) are actually affected.
-
-Let’s turn next to frequency-based disparities among different industries. Since we’ve established the importance of adjusting for the number of firms in each segment, we can skip to the punch line. Figure 5 groups sectors[^10] based on their relative event frequency.[^11]
-
-[^10]: Sectors throughout this report use the North American Industry Classification System (NAICS). Our labels are short versions of NAICS sectors—generally the first word of the official sector name.
-[^11]: A multiple >1 indicates higher relative incident frequency based on the number of firms in a sector; <1 indicates the opposite (low relative frequency).
-
-![Scatter plot grid showing the relative number of incidents compared to the number of firms in each sector over time from 2009 to 2024 (rolling 12mo.). Sectors are grouped into panels based on their historical relative frequency (Very High, High, Low, Very Low). Lines within each panel show the trend for specific sectors. Public and Management are in Very High. Finance and Information are in High, showing declining trends. Utilities, Mining, Manufacturing, and Transportation are in Low, showing increasing trends.](Image description)
-Figure 5: Relative number of incidents to number of firms in each sector (rolling 12mo. 2009-2024)
-
-The Public and Management sectors are the only two that have historically exhibited a very high relative incident frequency. For the former, we attribute that to mandatory disclosure requirements that typically exceed those in the private sector.
-
-### Key Risk Insight
-
-Incidents involving small and midsize businesses (SMBs) are far more common overall, but the relative incident frequency among large enterprises is much higher.
-
-The Management sector is a bit of an oddball in NAICS, consisting mainly of holding companies. We suspect part of what’s going on here is that incidents affecting their subsidiaries are being attributed to them as the parent entity.
-
-Moving to the upper-right panel, the Finance sector has historically seen a high share of incidents relative to the number of firms that exist. But that rate has fallen over time, perhaps due in part to the industry’s outsized security budgets. The Information sector continues to experience an elevated incident rate, yet is currently well below its high-water mark. Together, these industries control money and data flowing through the economy, so it’s no surprise they receive more than their fair share of cyberattacks.
-
-Energy and supply chain sectors are creeping up in incident frequency—Utilities, Mining, Manufacturing, and Transportation are no longer sitting safely below the line.
-
-Industries with historically low relative incident frequencies are split into two groups—those likely to remain low for the foreseeable future and those that will soon cross over the line of demarcation. We find it unsettling to see energy and supply chain sectors such as Utilities, Mining, Manufacturing, and Transportation (which includes oil and gas pipelines in NAICS) increasing in relative frequency. The Professional sector has already crossed that line, which is quite concerning given that they offer advice and services to the rest of us.
-
-## 3Q IS THE PROBABILITY OF INCIDENTS INCREASING?
-
-This question may initially sound similar to the previous two, but those involved tallying the total number of incidents reported across many organizations. Here, we explore how the likelihood of a single organization having an incident is changing over time. If that nuance isn’t quite clear, think of it like this: what are the chances your firm will suffer a significant incident this year?
-
-We’ll begin by changing our perspective from the past to the future—except how the future was modeled in the past… over time. Jeepers, this timey-wimey stuff is confusing, isn’t it? Maybe a chart will help; Figure 6 tracks the modeled probability[^12] of a typical organization[^13] experiencing an incident in the next 12 months.
-
-It is understandable if cybersecurity folks can’t hold back an “I told you so!” here because overall incident probability has almost quadrupled over the last 15 years. We could stop there, issue a press release, and bid you adieu until the next installment, but we’re just getting started.
-
-[^12]: See appendix for details on our approach to modeling annualized incident probability.
-[^13]: We use “typical” to remind readers that this model doesn’t account for the many factors that would make incidents more or less likely for a particular organization. We’ll look at some of those later.
-
-![Line chart showing the historical probability of a typical firm having an incident in the next year from 2008 to 2024. The probability increases from around 2.5% in 2008 to over 9% in 2024, with a plateau in the mid-2010s and a sharp rise in the 2020s.](Image description)
-Figure 6: Historical probability of a firm having an incident in the next year
-
-The probability that a typical firm will experience a significant security incident has almost quadrupled over the last 15 years.
-
-“But wait,” we hear you saying, “doesn’t the probability for different types of cyber events change over time?”
-
-You’re not wrong. We simply can’t cram everything into this one study.
-
-New studies are always in the pipeline — we regularly publish extra analysis like that on our website at [www.cyentia.com/iris](www.cyentia.com/iris).
-
-What if we told you that the probability of a <$100M firm suffering a security incident has more than doubled, while the chance of a $100B+ megacorporation suffering an incident has dropped by a third over the same time frame? Well, that’s exactly what Figure 7 tells us.
-
-![Line chart showing the annualized incident probability for firms in each revenue tier over time (rolling 12mo.). The probability for smaller firms (<$100M) shows a significant increase, while the probability for the largest firms (>$100B) shows a decrease.](Image description)
-Figure 7: Annualized incident probability for firms in each revenue tier (rolling 12mo.)
-
-Unfortunately, our dataset is silent on the underlying factors behind these trends, so all we can offer is some speculation. Perhaps cybercriminals have shifted to more volume-oriented (“low-hanging fruit”) strategies over time. Maybe the pace of digitalization has outpaced SMBs’ ability to defend their growing attack surfaces, while the bigger enterprise security budgets offset that. Maybe increased regulatory pressures on large corporations are gradually hardening enterprise security architectures. Whatever the cause(s), these are important trends that are worth further research by our industry.
-
-So, an organization’s size matters when evaluating the likelihood of incidents. Now, let’s see what happens when we treat industry as a feature of interest. Figure 8 paints that picture.
-
-Allow us to briefly describe what you’re looking at. Sectors are sorted in descending order by the latest probability estimate. So, a typical manufacturing firm has an 11% chance of having a security incident in the next 12 months—up from ~2% 15 years ago.
-
-![Grid of line charts showing the annualized incident probability for firms in selected sectors over time from 2008 to 2024 (rolling 12mo.). Each chart shows the trend for a specific sector, sorted by the latest probability estimate. Manufacturing, Retail, Public, Financial, Healthcare, Utilities, Information, and Entertainment sectors are shown, each with varying trend lines.](Image description)
-Figure 8: Annualized incident probability for firms in each sector (rolling 12mo.)
-
-We could spend oodles of time combing through historical evidence behind the peaks and troughs for certain industries, but we’ll leave that to eager readers. Suffice it to say that incident probability trends can be significantly different depending on firmographics (which are reflective of evolving business models, changes in the threat landscape, shifting adversary goals, etc.). That's intuitive, but perhaps seeing this confirmed will help validate the need to incorporate such factors into your cyber risk assessments.
-
-Sorry to disappoint if you were hoping to see updated versions of the old school IRIS charts/tables for incident likelihood by sector and revenue tier. Since this version of the IRIS focuses on trends over time, Figures 7 and 8 replaced those. But we recreated some of the key figures and stuck them in Appendix C as a thank you to our loyal readers.
-
-### Key Risk Insight
-
-Overall, the chances of any given organization experiencing an incident have gone up.
-
-But that trend has flattened or even reversed in some sectors and size tiers.
-
-Our analysis in this section focuses on the likelihood of experiencing at least one security incident within a year. It is possible, of course, for organizations to suffer multiple incidents, and veteran IRIS readers may recall that we've supplied probability tables for two, three, or five incidents in a 12-month period.
-
-We decided not to include that in this edition because a) it's already a long report, and b) feedback suggested most cyber risk models focused on single-event likelihood. However, we have not abandoned that concept and will continue that research outside of this study.
-
-Visit [www.cyentia.com/iris](www.cyentia.com/iris) to get additional analysis of multi-incident probabilities.
-
-## 4Q HAVE SECURITY INCIDENTS GOTTEN MORE COSTLY?
-
-We’ve covered the evolving frequency and likelihood of cyber events—now it’s time to talk dollars and cents. Let’s begin by establishing the distribution of financial losses from cyber events using Figure 9, which reproduces a classic IRIS chart with the latest and greatest data.[^14]
-
-[^14]: All loss amounts considered in this report have been converted to 2024 dollars to adjust for inflation.
-
-![Distribution plot (on a log scale) showing the distribution of reported losses for security incidents from 2015 to 2024. Key statistics like median ($603K), 95th percentile ($32M), geometric mean ($464K), and mean ($14M) are indicated. The plot shows a long tail of large losses and a noticeable bump or "shoulder" in the lower half of the distribution.](Image description)
-Figure 9: Distribution of reported losses for security incidents from 2015 to 2024
-
-The typical (median[^15]) incident costs about $600K, while more extreme (95th percentile) losses swell to $32 million. Note that Figure 9 is plotted on a log scale, so the tail of large losses is longer than it appears. If it’s not too much to “shoulder,” also note the bump in the lower half of the distribution. We’ll explore that later.
-
-[^15]: Prior IRIS used the geometric mean for a typical loss. Since the growing “shoulder” in lower part of the distribution pulls the geomean down, the median is better central measure for the updated distribution.
-
-NOTE: Losses analyzed in this study tend to reflect direct losses that are easier to quantify (e.g., response costs or lost revenue) and/or identify from public records (e.g., class action suits or U.S. Securities and Exchange Commission (SEC) filings). Indirect and intangible impacts often aren’t captured. Thus, this represents a conservative view of financial losses associated with cyber events.
-
-Indeed, moving from a static distribution to a more dynamic view reveals some major shifts. Median losses from a security incident have absolutely exploded over the last 15 years
+## Q4: Have Security Incidents Gotten More Costly?
+The typical (median) incident costs about $600K, while more extreme (95th percentile) losses swell to $32 million.
+
+![Figure 9: Distribution of reported losses for security incidents from 2015 to 2024]
+
+Median losses from a security incident have risen 15-fold from $190K to almost $3 million.
+
+---
+
+## Q5: Do Loss Trends Differ Among Event Types?
+The "shoulder" in the overall loss distribution results from a proliferation of fairly small losses from accidental disclosure events.
+
+![Figure 14: Distribution of reported losses by incident pattern]
+
+While ransomware losses surge past $27M at the high end, top-tier system intrusions have dropped sharply—down to $7.4M from over $200M.
+
+---
+
+## Q6: Are Intrusion Methods Changing Over Time?
+Using Valid Accounts to gain illicit access has held the pole position for the entire time period. Exploit Public-Facing Applications and External Remote Services have surged from single-digit percentages to heights of 38% and 30%, respectively.
+
+![Figure 16: Prevalence of ATT&CK Initial Access techniques observed in incidents over time]
+
+---
+
+## Q7: What Are We Missing From Current Events?
+We analyzed cyberattacks collected via Feedly’s intelligence capabilities to see what our core incident dataset might be missing.
+
+![Figure 18: Number of security incidents publicly reported or discovered each quarter (including Feedly data)]
+
+The median loss for Feedly-sourced cyber events stands at $28.5M, which is 30x higher than that of our historical dataset ($603K). This corroborates the utility of monitoring current events to help compensate for the reporting lag in risk data.
+
+---
+*Note: This report is based on analyzing incidents that make their way into the public record through outward signs or impacts, mandatory reporting, voluntary disclosure, company filings, public lawsuits, etc.*
+
+---
+
+| $786.9M | IRIS 2025 IT'S ABOUT TIME |
+|                   |     | $1K | $10K | $100K   | $1M | $10M    | $100M  | $1B     |                           |
+Source: IRIS 2025 (Cyentia Institute)
+Figure 19: Comparison of reported financial losses from incidents by source
+| THE CYENTIA INSTITUTE CYENTIA.COM |     |     |     |     |     |     |     | 29  |     |
+| --------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+THE CYENTIA INSTITUTE CYENTIA.COM 30
+IRIS
+2025
+IT'S
+ABOUT
+TIME
+Much of what we see (or don’t see) here goes
+back to sourcing methods. The primary source
+of our historical loss data, Zywave, has a strong
+focus on the insurance and reinsurance market.
+They’re diligent in gathering datapoints on all
+aspects of losses, both large and small. Minor Key Risk Insight
+loss events might be interesting to insurers
+managing risk across a large portfolio of
+If your cyber risk analysis relies
+organizations, but media outlets tend to focus
+on near-term trends, consider
+on major breaches or disruptions. Since such
+incorporating sources that
+events rarely go unnoticed, they’re ripe for
+emphasize current events to
+open-source intel collection. If you’re focused
+supplement historical event data.
+on tail risk—which is what many execs are
+most concerned with—closely tracking these
+mega-loss events is essential.
+One of my favorite
+things about my time
+on Verizon's DBIR
+team was working
+with the scores
+of external organizations
+that contribute data for
+analysis in that report. It's
+something I'm glad we've
+been able to continue in our
+research at Cyentia.
+I'm grateful to all our data
+partners and sponsors who
+make it possible for us to do
+impactful research for the
+community. Reach out if
+you have data that would
+unlock new avenues of cyber
+risk analysis!
+~ Wade Baker PhD
+Co-Founder | The Cyentia Insitute
+
+THE CYENTIA INSTITUTE CYENTIA.COM 31
+IRIS
+2025
+IT'S
+ABOUT
+TIME
+A1
+ME THODOLOGY
+Data Collection
+The IRIS research draws heavily upon Zywave’s Cyber Loss Data, which contains over 150,000 security
+incidents and associated losses spanning decades. The data is compiled from publicly available sources,
+such as breach disclosures, company filings, litigation details, and Freedom of Information Act requests. It
+is the most comprehensive source of cybersecurity incidents and losses available.
+That said, we’re not claiming this dataset is all-inclusive. We can only analyze incidents that make their
+way into the public record through outward signs or impacts, mandatory reporting, voluntary disclosure,
+etc. That’s not all the events that occurred over the timeframe, of course, but we have high confidence that
+significant cyber events are well represented.
+Additionally, Cyentia does extensive processing of Zywave’s base dataset to extend and enrich it for
+cyber risk analysis use cases. This is done using a combination of classification models, natural language
+processing (NLP), taxonomy mapping, malware behavioral analysis, and manual tagging by our analysts.
+Incident and loss data collected by Feedly is used for the last section to study trends we might be missing
+from current events. We started with 2024 events identified by Feedly’s Cyber Attacks AI model. We further
+refined this by focusing on “memes,” which is Feedly’s method of clustering articles and information on a
+trending topic. The point is that we’re not simply counting articles in this analysis. Finally, we reviewed the
+identified events to train a classification model to distinguish successful incidents affecting organizations
+from other threats and trends that aren’t comparable to our core dataset.
+GOT DATA FOR THE NEXT IRIS?
+If you have information on security incidents
+and losses and might be willing to contribute
+anonymized data for analysis in a future IRIS,
+please reach out! We’re especially keen to
+incorporate insights from cyber insurance
+claims and incident response investigations.
+
+THE CYENTIA INSTITUTE CYENTIA.COM 32
+IRIS
+2025
+IT'S
+ABOUT
+TIME
+Incident Likelihood
+Though we don’t delve into it in this edition, readers of prior IRIS may recall that we have modeled the
+frequency of security incidents over a fixed 10 year time period, allowing for the fact that organizations can
+have more than one in a single year. We took the same approach in this edition, expanding the model to
+include a time component. Ultimately, we present estimates as the annual probability of an organization
+experiencing at least one event.
+To do this, we divide our historical dataset into 12-month rolling windows and count the number of incidents
+for each organization. This gives us a large number of observations that allow us to more confidently model
+the annualized loss event frequency.
+We then treat these observations as samples from an underlying probability distribution and use random
+effects models to estimate the parameters both overall and within specific slices like industry and revenue
+bands over time. The result is a closed-form representation of the probability that an organization will
+experience a certain number of incidents in a given year that can change over time.
+Additionally, in prior IRIS reports we reported both upper and lower bound estimates for incident likelihood.
+We’ve dropped that distinction in this edition in favor of exclusively using the more risk-averse upper bound
+estimate.
+In a nutshell, the difference between these approaches stems from the count of organizations used as the
+denominator for the calculation. We don’t know how many exist throughout the world, so the upper bound
+uses the total number of organizations that exist in our historical incident database. While it’s true that this
+approach excludes some extremely secure or lucky firms, the fact is that those prone to incidents in the
+future have probably had one at some point in the past. The result is a more conservative estimate that we
+believe is more suitable for risk management.
+Financial Losses
+Financial losses tend to be less reported than other data points for cyber events. There are many reasons
+for this, but the result is that the majority of incidents in our dataset do not include anything about losses.
+Those that do tend to reflect direct losses that are easier to quantify (e.g., response costs or lost revenue)
+and/or identify from public records (e.g., class action suits or SEC filings). Indirect and intangible impacts
+usually aren’t captured.
+The good news, from a data standpoint, is that the record of losses from major security incidents—like
+those we analyze in this study—is more complete than for minor events due to increased visibility and
+reporting. Thus, we hold that our loss dataset is sufficient to form a well-supported model of cyber events
+over the last 15 years.
+Note that all financial loss values presented in this report have been adjusted for inflation.
+
+THE CYENTIA INSTITUTE CYENTIA.COM 33
+IRIS
+2025
+IT'S
+ABOUT
+TIME
+A2
+INCIDE NT PAT TE RN
+DE FINITIONS
+All security incidents in our historical dataset are assigned one of these mutually exclusive23 patterns using
+a combination of natural language processing techniques and human expert assessment.
+ACCIDENTAL DISCLOSURE: Data stores that are inadvertently left accessible to
+unauthorized parties, typically through misconfigurations on the part of the data custodian.
+DOS ATTACK: Any attack intended to render online systems, applications, or networks
+unavailable, typically by consuming processing or bandwidth resources.
+DEFACEMENT: Any unauthorized content modification to an organization’s website or
+other online assets.
+FRAUD OR SCAM: Any incident that primarily employs various forms of deception to
+defraud the victim of money, property, identity, information, and so on.
+INSIDER MISUSE: Inappropriate use of privileged access, either by an organization’s own
+employees and contractors or a trusted third party.
+PHYSICAL THREATS: Threats that occur via a physical vector, such as device tampering,
+snooping, theft, loss, sabotage, and assault.
+RANSOMWARE: A broad family of malware that seeks to encrypt data with the promise to
+unlock upon payment or seeks to completely eradicate data/systems without the pretense
+of collecting payment.
+SYSTEM FAILURE: All unintentional service disruptions resulting from system, application,
+or network malfunctions or environmental hazards.
+SYSTEM INTRUSION: All attempts to compromise systems, applications, or networks by
+subverting logical access controls, elevating privileges, deploying malware, and so on.
+23 Yes, it’s true that an incident could involve more than one of these (e.g., system intrusion and ransomware). However, the purpose of these patterns is to represent the primary
+nature of the event.
+
+THE CYENTIA INSTITUTE CYENTIA.COM 34
+IRIS
+2025
+IT'S
+ABOUT
+TIME
+CHARTS & TABLES FROM
+PRIOR IRIS STUDIES
+This appendix contains up-to-date versions of selected figures from IRIS 2022 that provide probability and
+loss comparisons among sectors and revenue bands. If there are other figures you'd like to see from an IRIS
+of yesteryear, let us know!
+Education (1.60x)
+Information (1.55x)
+Professional (1.50x)
+Financial (1.44x)
+Healthcare (1.34x)
+Public (1.34x)
+Retail (1.19x)
+Hospitality (1.15x)
+Management (1.08x)
+Manufacturing (1.03x)
+Trade (0.97x)
+Entertainment (0.94x)
+Real Estate (0.93x)
+Administrative (0.92x)
+Agriculture (0.92x)
+Other (0.92x)
+Construction (0.91x)
+Transportation (0.78x)
+Mining (0.76x)
+Utilities (0.62x)
+Figure A1: Relative probability of one or more loss events among sectors (Figure 5 in IRIS 2022). The point
+of comparison is the overall median across all organizations.
+Figure A2: Relative probability of one or more loss events among annual revenue tiers. The point of
+comparison is the overall median across all organizations.
+rotces
+naidem
+ot
+evitaleR
+A3
+Source: IRIS 2025 (Cyentia Institute)
+More than $100B (3.46x)
+$10B to $100B (2.49x)
+$1B to $10B (1.20x)
+$100M to $1B (0.80x)
+$10M to $100M (0.67x)
+Less than $10M (0.60x)
+Source: IRIS 2025 (Cyentia Institute)
+
+Losses observed per sector
+|                            |     |     |     |     |     | Sector                     |     | Geometric mean |       | Median 95th percentile |       |
+| -------------------------- | --- | --- | --- | --- | --- | -------------------------- | --- | -------------- | ----- | ---------------------- | ----- |
+|                            |     |     |     |     |     | Administrative             |     |                | $318K | $529K                  | $31M  |
+|                            |     |     |     |     |     | Agriculture                |     |                | $1M   | $2M                    | $3M   |
+|                            |     |     |     |     |     | Construction               |     |                | $164K | $189K                  | $5M   |
+|                            |     |     |     |     |     | Education                  |     |                | $226K | $249K                  | $6M   |
+|                            |     |     |     |     |     | Entertainment              |     |                | $147K | $282K                  | $12M  |
+|                            |     |     |     |     |     | Financial                  |     |                | $951K | $1M                    | $194M |
+|                            |     |     |     |     |     | Healthcare                 |     |                | $524K | $557K                  | $14M  |
+|                            |     |     |     |     |     | Hospitality                |     |                | $687K | $600K                  | $62M  |
+| Losses observed per sector |     |     |     |     |     | Losses observed per sector |     |                |       |                        |       |
+|                            |     |     |     |     |     | Information                |     |                | $783K | $718K                  | $217M |
+Sector Geometric mean Median 95th percentile Sector Management Geometric mean $343K Median $332K 95th percentile $140M
+Administrative $318K $529K $31M AMdamnuinfaiscttruartiivneg $3$118MK $5$219MK $$4321MM
+Agriculture $1M $2M $3M MAginriicnuglture $$11MM $$12MM $$23MM
+Construction $164K $189K $5M OCothnesrt rsuecrtvioicnes $$216624KK $$314889KK $4$15MM
+Education $226K $249K $6M PEdroufceastsioionnal $$420206KK $$723469KK $1$76MM
+Entertainment $147K $282K $12M PEnutbelirctainment $$213447KK $$221842KK $$1182MM
+Financial $951K $1M $194M RFienaaln Ecsiatalte $$294541KK $2$316MK $1$924MM
+Healthcare $524K $557K $14M RHeetaalitlhcare $$857224KK $$754567KK $$4154MM
+Hospitality $687K $600K $62M THroasdpeitality $$960827KK $6$010MK $$2632MM
+Information $783K $718K $217M TInrfaonrsmpaotritoantion $$278863KK $$479108KK $$22137MM
+Management $343K $332K $140M UMtailnitaiegsement $$131433KK $$134362KK $1$430MM
+Manufacturing $1M $1M $42M Manufacturing S$o1uMrce: IRIS$ 120M25 (Cyentia Ins$ti4tu2teM)
+| Mining |     |     | $1M $1M |     | $2M | Mining |     |     | $1M | $1M | $2M |
+| ------ | --- | --- | ------- | --- | --- | ------ | --- | --- | --- | --- | --- |
+Other seFrviigcuesre A3: Loss $m26a2gKnitu$d3e48 sKummary st$a4t1isMtics Obyth esre scetrovric (eTsable 4 in IR$I2S6 22K022$)348K $41M
+| Professional |     | $400K | $736K |     | $17M | Professional |     |     | $400K | $736K | $17M |
+| ------------ | --- | ----- | ----- | --- | ---- | ------------ | --- | --- | ----- | ----- | ---- |
+| Public       |     | $234K | $214K |     | $18M | Public       |     |     | $234K | $214K | $18M |
+Real Estate $244K $236K $2M Real Estate Typical $244K Extreme $236K $2M
+| Retail          |     | $872K | $746K |     | $45M | Retail |     |     | $872K | $746K | $45M |
+| --------------- | --- | ----- | ----- | --- | ---- | ------ | --- | --- | ----- | ----- | ---- |
+| More than $100B |     |       |       |     |      |        | $6M |     |       | $259M |      |
+| Trade           |     | $902K | $1M   |     | $23M | Trade  |     |     | $902K | $1M   | $23M |
+Transportation $286K $490K $23M Transportation $286K $490K $23M
+Ut$i1li0tiBe sto $100B $113K $146K $3M $U2Mtilities $113K $$217416MK $3M
+Source: IRIS 2025 (Cyentia Institute) Source: IRIS 2025 (Cyentia Institute)
+| $1B to $10B |     |     |     |     |       | $2M |     |      | $57M |     |     |
+| ----------- | --- | --- | --- | --- | ----- | --- | --- | ---- | ---- | --- | --- |
+|             |     |     |     |     | $446K |     |     | $12M |      |     |     |
+$100M to $1B
+| $10M to $100M  |     |     |      |       | $325K |     |     | $7M  |       |     |     |
+| -------------- | --- | --- | ---- | ----- | ----- | --- | --- | ---- | ----- | --- | --- |
+| Less than $10M |     |     |      |       | $412K |     |     | $11M |       |     |     |
+|                | $1K |     | $10K | $100K |       | $1M |     | $10M | $100M | $1B |     |
+Source: IRIS 2025 (Cyentia Institute)
+Figure A4: Distribution of reported cyber event losses by annual revenue of affected firms (Figure 7 in IRIS
+2022)
+IRIS 2025 IT'S ABOUT TIME
+THE CYENTIA INSTITUTE CYENTIA.COM 35
+
+THE CYENTIA INSTITUTE IS A WIDELY-RESPECTED, RESEARCH AND DATA SCIENCE FIRM
+WORKING TO ADVANCE CYBERSECURITY KNOWLEDGE AND PRACTICE.
+We accomplish that goal through collaborative research publications like the
+IRIS series and analytic services that help our clients manage cyber risk.
+Visit cyentia.com for more information.

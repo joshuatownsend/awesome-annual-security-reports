@@ -2,19 +2,27 @@ name: Security Report Discovery
 
 on:
   schedule:
-    - cron: '0 11 * * *'  # 6:00 AM ET daily
+    - cron: '0 11 * * 1-5'  # 6:00 AM ET weekdays
 
   workflow_dispatch:
     inputs:
       max_discoveries:
-        description: 'Maximum number of reports to discover'
+        description: 'Max issues to create (default: from workflow-config.json)'
         required: false
-        default: '10'
+        default: ''
+        type: string
+      override_date:
+        description: 'Override today''s date for testing (YYYY-MM-DD, leave blank for today)'
+        required: false
+        default: ''
         type: string
 
 permissions:
   contents: read
   issues: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   discover:
@@ -22,85 +30,213 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: |
-          pip install --break-system-packages \
-            google-api-python-client \
-            beautifulsoup4 \
-            requests
+        run: pip install --break-system-packages requests google-genai google-generativeai google-ai-generativelanguage
 
-      - name: Load workflow configuration
-        id: load_config
+      - name: Check automated issue cap
+        id: issue-cap
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          DEFAULT_LIMIT=$(jq -r '.workflow.discovery.default_limit' .github/artifacts/workflow-config.json)
-          echo "default_limit=$DEFAULT_LIMIT" >> $GITHUB_OUTPUT
-          echo "✓ Default limit: $DEFAULT_LIMIT"
+          MAX_ISSUES=$(jq -r '.workflow.discovery.max_open_automated_issues // 20' .github/artifacts/workflow-config.json)
+
+          # Count open issues that carry the 'automated' label (created by discovery runs)
+          OPEN_COUNT=$(gh issue list \
+            --state open \
+            --label "automated" \
+            --json number \
+            -q length)
+
+          echo "Open automated issues: ${OPEN_COUNT} / ${MAX_ISSUES}"
+
+          if [ "${OPEN_COUNT:-0}" -ge "${MAX_ISSUES}" ]; then
+            echo "cap_reached=true" >> $GITHUB_OUTPUT
+            echo "open_count=$OPEN_COUNT" >> $GITHUB_OUTPUT
+            echo "max_issues=$MAX_ISSUES" >> $GITHUB_OUTPUT
+            echo "⊘ Issue cap reached (${OPEN_COUNT} >= ${MAX_ISSUES}) — skipping discovery."
+            echo "  Triage and close open automated issues to unblock future discovery runs."
+          else
+            echo "cap_reached=false" >> $GITHUB_OUTPUT
+            echo "open_count=$OPEN_COUNT" >> $GITHUB_OUTPUT
+            echo "max_issues=$MAX_ISSUES" >> $GITHUB_OUTPUT
+            echo "✓ Issue cap OK (${OPEN_COUNT} < ${MAX_ISSUES})"
+          fi
 
       - name: Run discovery
         id: discovery
+        if: steps.issue-cap.outputs.cap_reached != 'true'
         env:
           GOOGLE_SEARCH_API_KEY: ${{ secrets.GOOGLE_SEARCH_API_KEY }}
-          GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
+          GOOGLE_CSE_ID:         ${{ secrets.GOOGLE_CSE_ID }}
+          GH_TOKEN:              ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY:     ${{ github.repository }}
+          VIRUS_TOTAL_API_KEY:   ${{ secrets.VIRUS_TOTAL_API_KEY }}
+          GEMINI_API_KEY:        ${{ secrets.GEMINI_API_KEY }}
         run: |
-          MAX="${{ github.event.inputs.max_discoveries }}"
-          if [ -z "$MAX" ]; then
-            MAX="${{ steps.load_config.outputs.default_limit }}"
+          ARGS="--artifacts-dir .github/artifacts"
+
+          if [ -n "${{ github.event.inputs.max_discoveries }}" ]; then
+            ARGS="$ARGS --max-discoveries ${{ github.event.inputs.max_discoveries }}"
+          fi
+          if [ -n "${{ github.event.inputs.override_date }}" ]; then
+            ARGS="$ARGS --date ${{ github.event.inputs.override_date }}"
           fi
 
-          python .github/scripts/report-discovery.py \
-            --artifacts-dir .github/artifacts \
-            --max-discoveries "$MAX" \
-            > discovery_output.log 2>&1
+          set +e
+          python .github/scripts/report-discovery.py $ARGS > discovery_output.log 2>&1
+          EXIT_CODE=$?
+          set -e
 
-          echo "exit_code=$?" >> $GITHUB_OUTPUT
+          cat discovery_output.log
+
+          parse() { grep "^$1=" discovery_output.log | cut -d= -f2 || echo "0"; }
+
+          echo "tasks=$(parse DISCOVERY_TASKS)"                 >> $GITHUB_OUTPUT
+          echo "created=$(parse DISCOVERY_CREATED)"             >> $GITHUB_OUTPUT
+          echo "suppressed=$(parse DISCOVERY_SUPPRESSED)"       >> $GITHUB_OUTPUT
+          echo "skipped=$(parse DISCOVERY_SKIPPED)"             >> $GITHUB_OUTPUT
+          echo "pdf_finds=$(parse DISCOVERY_PDF_FINDS)"         >> $GITHUB_OUTPUT
+          echo "landing_finds=$(parse DISCOVERY_LANDING_FINDS)" >> $GITHUB_OUTPUT
+          echo "tier_current=$(parse DISCOVERY_TIER_CURRENT)"   >> $GITHUB_OUTPUT
+          echo "tier_stale=$(parse DISCOVERY_TIER_STALE)"       >> $GITHUB_OUTPUT
+          echo "tier_old=$(parse DISCOVERY_TIER_OLD)"           >> $GITHUB_OUTPUT
+          echo "vt_clean=$(parse DISCOVERY_VT_CLEAN)"           >> $GITHUB_OUTPUT
+          echo "vt_suspicious=$(parse DISCOVERY_VT_SUSPICIOUS)" >> $GITHUB_OUTPUT
+          echo "vt_malicious=$(parse DISCOVERY_VT_MALICIOUS)"   >> $GITHUB_OUTPUT
+          echo "exit_code=$EXIT_CODE"                           >> $GITHUB_OUTPUT
 
       - name: Upload discovery log
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: discovery-log-${{ github.run_id }}
           path: discovery_output.log
-          retention-days: 7
+          retention-days: 14
 
       - name: Generate step summary
         if: always()
         run: |
           RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          ARTIFACT_URL="$RUN_URL"
+          DATE_USED="${{ github.event.inputs.override_date }}"
+          [ -z "$DATE_USED" ] && DATE_USED="$(date +%Y-%m-%d) (today)"
 
-          # Parse log metrics
-          SCANNED=$(grep -c "Searching:" discovery_output.log 2>/dev/null || echo "0")
-          DISCOVERED=$(grep -c "✓ Found candidate" discovery_output.log 2>/dev/null || echo "0")
-          CREATED=$(grep -c "✓ Created issue" discovery_output.log 2>/dev/null || echo "0")
+          CAP_REACHED="${{ steps.issue-cap.outputs.cap_reached }}"
+          OPEN_ISSUES="${{ steps.issue-cap.outputs.open_count }}"
+          MAX_ISSUES="${{ steps.issue-cap.outputs.max_issues }}"
+
+          CREATED="${{ steps.discovery.outputs.created }}"
+          TASKS="${{ steps.discovery.outputs.tasks }}"
+          SUPPRESSED="${{ steps.discovery.outputs.suppressed }}"
+          SKIPPED="${{ steps.discovery.outputs.skipped }}"
+          PDF_F="${{ steps.discovery.outputs.pdf_finds }}"
+          LAND_F="${{ steps.discovery.outputs.landing_finds }}"
+          T_CURR="${{ steps.discovery.outputs.tier_current }}"
+          T_STALE="${{ steps.discovery.outputs.tier_stale }}"
+          T_OLD="${{ steps.discovery.outputs.tier_old }}"
+          VT_CLEAN="${{ steps.discovery.outputs.vt_clean }}"
+          VT_SUSP="${{ steps.discovery.outputs.vt_suspicious }}"
+          VT_MAL="${{ steps.discovery.outputs.vt_malicious }}"
 
           echo "## 🔍 Security Report Discovery" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| Trigger | \`${{ github.event_name }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Max Discoveries | \`${{ github.event.inputs.max_discoveries || steps.load_config.outputs.default_limit }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Searches Run | $SCANNED |" >> $GITHUB_STEP_SUMMARY
-          echo "| Candidates Found | $DISCOVERED |" >> $GITHUB_STEP_SUMMARY
-          echo "| Issues Created | $CREATED |" >> $GITHUB_STEP_SUMMARY
+          echo "| Date    | $DATE_USED |" >> $GITHUB_STEP_SUMMARY
+          echo "| Open Automated Issues | ${OPEN_ISSUES:-0} / ${MAX_ISSUES:-20} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ "$CREATED" -gt 0 ]; then
-            echo "### ✅ New Reports Discovered" >> $GITHUB_STEP_SUMMARY
+          if [ "$CAP_REACHED" == "true" ]; then
+            echo "### ⏸️ Issue Cap Reached" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            grep "✓ Created issue:" discovery_output.log | sed 's/.*✓ Created issue: /- /' >> $GITHUB_STEP_SUMMARY
+            echo "**${OPEN_ISSUES} open automated issues** — at or above the cap of **${MAX_ISSUES}**." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Triage and close open discovery issues to unblock future runs." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "📎 Full log: [workflow artifacts]($RUN_URL)" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+
+          echo "### 🔭 Search Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Tasks run (2 API calls each)   | ${TASKS:-0} |" >> $GITHUB_STEP_SUMMARY
+          echo "| — Current year (gap = 1yr)     | ${T_CURR:-0} |" >> $GITHUB_STEP_SUMMARY
+          echo "| — One year stale (gap = 2yr)   | ${T_STALE:-0} |" >> $GITHUB_STEP_SUMMARY
+          echo "| — Older gaps (gap ≥ 3yr)       | ${T_OLD:-0} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Suppressed (below threshold)   | ${SUPPRESSED:-0} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### 📋 Issues Created: ${CREATED:-0}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Find Type | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 📥 Direct PDF        | ${PDF_F:-0} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔒 Gated landing page | ${LAND_F:-0} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          URL_SEEN=$(parse DISCOVERY_URL_SEEN 2>/dev/null || echo 0)
+          GEM_REJ=$(parse DISCOVERY_GEMINI_REJECTED 2>/dev/null || echo 0)
+          SIM_DUP=$(parse DISCOVERY_SIMILARITY_DUP 2>/dev/null || echo 0)
+          if [ "$((${URL_SEEN:-0} + ${GEM_REJ:-0} + ${SIM_DUP:-0}))" -gt 0 ]; then
+            echo "### 🔬 Pre-issue Filters" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Filter | Count |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| 🔁 URL already seen | ${URL_SEEN:-0} |" >> $GITHUB_STEP_SUMMARY
+            echo "| 🤖 Gemini rejected  | ${GEM_REJ:-0} |" >> $GITHUB_STEP_SUMMARY
+            echo "| 📄 Similarity dup   | ${SIM_DUP:-0} |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # VirusTotal summary — only shown when at least one PDF was scanned
+          VT_TOTAL=$(( ${VT_CLEAN:-0} + ${VT_SUSP:-0} + ${VT_MAL:-0} ))
+          if [ "$VT_TOTAL" -gt 0 ]; then
+            echo "### 🛡️ VirusTotal Pre-Scans: ${VT_TOTAL}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Verdict | Count |" >> $GITHUB_STEP_SUMMARY
+            echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| ✅ Clean      | ${VT_CLEAN:-0} |" >> $GITHUB_STEP_SUMMARY
+            echo "| ⚠️ Suspicious | ${VT_SUSP:-0} |" >> $GITHUB_STEP_SUMMARY
+            echo "| ❌ Malicious  | ${VT_MAL:-0} |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            if [ "${VT_MAL:-0}" -gt 0 ]; then
+              echo "⚠️ **${VT_MAL} PDF(s) flagged as Malicious** — issues are labeled \`malicious-pdf\` for triage." >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+            if [ "${VT_SUSP:-0}" -gt 0 ]; then
+              echo "⚠️ **${VT_SUSP} PDF(s) flagged as Suspicious** — issues are labeled \`suspicious-pdf\` for triage." >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+
+          if [ "${CREATED:-0}" -gt 0 ]; then
+            echo "#### New issues" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            grep "✓ Created issue" discovery_output.log \
+              | sed 's/.*Created issue \[.*\]: /- /' >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           else
-            echo "⊘ No new reports discovered this run." >> $GITHUB_STEP_SUMMARY
+            echo "⊘ No new issues created this run." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
 
-          echo "📎 Full discovery log available in [workflow artifacts]($RUN_URL)." >> $GITHUB_STEP_SUMMARY
+          if [ "${SUPPRESSED:-0}" -gt 0 ]; then
+            echo "<details><summary>🔻 Suppressed candidates</summary>" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            grep "⊘ Best score" discovery_output.log \
+              | sed 's/^  /- /' >> $GITHUB_STEP_SUMMARY 2>/dev/null || true
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "</details>" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "📎 Full log: [workflow artifacts]($RUN_URL)" >> $GITHUB_STEP_SUMMARY

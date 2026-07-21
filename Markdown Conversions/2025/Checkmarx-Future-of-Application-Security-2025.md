@@ -1,230 +1,162 @@
-# Report
-The Future of Application Security in the Era of AI
-
-2026 Outlook: When a False Sense of Security Meets Breakneck Developer Velocity
+# The Future of Application Security in the Era of AI
 
 ## Table of Contents
 - [Executive Summary](#executive-summary)
-  - [Industry Insights](#industry-insights)
+- [Industry Insights](#industry-insights)
 - [Strategic Imperatives](#strategic-imperatives)
-  - [01 Move from awareness to action](#01-move-from-awareness-to-action)
-  - [02 Embed ‘code-to-cloud’ security](#02-embed-code-to-cloud-security)
-  - [03 Govern AI use in development](#03-govern-ai-use-in-development)
-  - [04 Don’t just acquire tools, operationalize them](#04-dont-just-acquire-tools-operationalize-them)
-  - [05 Prepare for agentic AI in AppSec](#05-prepare-for-agentic-ai-in-appsec)
-  - [06 Fuel cultural change with developer empowerment](#06-fuel-cultural-change-with-developer-empowerment)
 - [Introduction](#introduction)
-  - [The Road Ahead: Cautious Optimism](#the-road-ahead-cautious-optimism)
-  - [Methodology](#methodology)
-- [The AppSec Readiness Gap](#the-appsec-readiness-gap)
-  - [The cost of complacency](#the-cost-of-complacency)
-  - [What this means](#what-this-means)
-  - [Modern threats, same old AppSec](#modern-threats-same-old-appsec)
-  - [What this means](#what-this-means-1)
-  - [Modern threats, same old AppSec](#modern-threats-same-old-appsec-1)
-  - [What this means](#what-this-means-2)
-- [Systemic Risk Tolerance: Why Known Vulnerabilities Reach Production?](#systemic-risk-tolerance-why-known-vulnerabilities-reach-production)
-  - [Has speed over safety become the new normal?](#has-speed-over-safety-become-the-new-normal)
-  - [What this means](#what-this-means-3)
-- [From Critical Exposure to Technical Resilience](#from-critical-exposure-to-technical-resilience)
-  - [Tools in hand, but not in play](#tools-in-hand-but-not-in-play)
-  - [What this means](#what-this-means-4)
-- [AI: The AppSec Curse and (Possibly) the Cure](#ai-the-appsec-curse-and-possibly-the-cure)
-  - [AI has infiltrated the SDLC – can it help to secure it too?](#ai-has-infiltrated-the-sdlc--can-it-help-to-secure-it-too)
-  - [What this means](#what-this-means-5)
-- [The Security-Development Rift Is Closing — Slowly](#the-security-development-rift-is-closing--slowly)
-  - [Are developers upping their security game?](#are-developers-upping-their-security-game)
-  - [What this means](#what-this-means-6)
-  - [The Path to Security-Development Alignment](#the-path-to-security-development-alignment)
-- [Conclusion](#conclusion)
-- [Key Takeaways](#key-takeaways)
-  - [For AppSec Managers](#for-appsec-managers)
-  - [For CISOs](#for-cisos)
-  - [For Developers](#for-developers)
+- [The Road Ahead: Cautious Optimism](#the-road-ahead-cautious-optimism)
+- [Methodology](#methodology)
+- [Chapter 1: The AppSec Readiness Gap](#chapter-1-the-appsec-readiness-gap)
+- [Chapter 2: Systemic Risk Tolerance: Why Known Vulnerabilities Reach Production?](#chapter-2-systemic-risk-tolerance-why-known-vulnerabilities-reach-production)
+- [Chapter 3: From Critical Exposure to Technical Resilience](#chapter-3-from-critical-exposure-to-technical-resilience)
+- [Chapter 4: AI: The AppSec Curse and (Possibly) the Cure](#chapter-4-ai-the-appsec-curse-and-possibly-the-cure)
+- [Chapter 5: The Security-Development Rift Is Closing — Slowly](#chapter-5-the-security-development-rift-is-closing--slowly)
+
+---
 
 ## Executive Summary
+2025 marks a turning point in application security. The threat landscape is accelerating faster than most security programs can keep up with. Emerging technologies, including AI, multi-cloud architectures, and sprawling software supply chains, are vastly expanding the attack surface.
 
-2025 marks a turning point in application security. The threat landscape isn’t just evolving. It’s accelerating faster than most security programs can keep up with.
+Application security can no longer afford to be reactive or siloed. It demands immediate, transformative change. Drawing on insights from over 1,500 AppSec stakeholders globally, this report captures a pivotal moment in the widening disconnect between AppSec awareness and real-world readiness.
 
-Emerging technologies, including AI, multi-cloud architectures, and sprawling software supply chains, are vastly expanding the attack surface.
-
-At the same time, business pressure is forcing teams to knowingly ship vulnerable code, eroding the last guardrails of secure development.
-
-In this environment of increasing pressure to deploy faster, developers turn to AI to write large amounts, if not most of, their code. AI is becoming much more than a tool – it’s taking the lead from developers and introducing a new, uncharted frontier of risk.
-
-Application security can no longer afford to be reactive or siloed. It demands immediate, transformative change.
-
-Drawing on insights from over 1,500 AppSec stakeholders globally (CISOs, AppSec Managers, and Heads of Development), this report captures a pivotal moment in the widening disconnect between AppSec awareness and real-world readiness.
-
-It also provides sharp insights on how organizations can not only mitigate but reverse this inertia toward true security maturity that will facilitate and adapt to the upcoming changes.
-
-### Industry Insights
-
-**AI is writing the code. Developers are just hitting deploy, ushering in a new era of risk**
-As AI-generated code becomes the norm, developer ownership is fading and AppSec is struggling to keep up the pace: While 50% of respondents (excluding Heads of Development) already use AI security code assistants with a third (34%) admitting that over 60% of their code is AI-generated, only 18% have approved usage policies, exposing teams to unmanaged risks and shadow development.
-
-A third of developers admit that
-**Over 60% of their code**
-is AI-generated
-
-**Vulnerabilities are pushed as standard**
-81% of organizations surveyed admit to knowingly shipping vulnerable code either sometimes or often. This isn’t oversight—it’s strategy. Under pressure to deliver, teams are treating patch-later practices as acceptable risk, embedding insecurity into the SDLC.
-
-**81% of organizations**
-admit to knowingly shipping
-vulnerable code either sometimes
-or often.
-
-**Breaches are accelerating—and becoming normalized.**
-A second consecutive year of rise in breach volume indicates deep structural flaws: 98% of organizations experienced a breach from vulnerable code—up from 91% in 2024 and 78% in 2023. The share reporting four or more breaches surged from 16% to 27% year over year, signaling a compounding risk cycle and deeper systemic issues.
-
-**98% of organizations**
-experienced a breach from
-vulnerable code
-
-**Even the most foundational security tools are overwhelmingly underused**
-Fewer than half of respondents (excluding Heads of Development) are actively using core, mature AppSec tools like DAST (47%) or IaC scanning (48%), despite growing availability.
-
-**50% of respondents**
-are actively using core, mature
-AppSec tools
-
-**DevSecOps talk is common. Execution? Not so much.**
-Developer responsibility is rising, with vulnerability remediation improving year over year. Still, friction between development and security persists, and many organizations remain in the early stages of adopting DevSecOps holistically. Now is the time to accelerate this cultural shift.
-
-**51% of organizations**
-in North America have adopted
-DevSecOps
+## Industry Insights
+- **AI is writing the code.** Developers are just hitting deploy, ushering in a new era of risk. Over 60% of code is AI-generated, yet only 18% of organizations have approved usage policies.
+- **Vulnerabilities are pushed as standard.** 81% of organizations admit to knowingly shipping vulnerable code either sometimes or often.
+- **Breaches are accelerating.** 98% of organizations experienced a breach from vulnerable code.
+- **Foundational security tools are underused.** 50% of respondents are actively using core, mature AppSec tools.
+- **DevSecOps execution lags.** While talk is common, only 51% of organizations in North America have adopted DevSecOps.
 
 ## Strategic Imperatives
-
-To close the readiness gap and build a sustainable AppSec posture for 2025 and beyond, organizations must act decisively:
-
-### 01 Move from awareness to action
-Organizations must acknowledge that awareness alone won’t stop breaches. A mature security posture requires shared accountability, early intervention, and operationalized practices.
-
-### 02 Embed ‘code-to-cloud’ security
-To defend against modern threats, organizations must embed security across the entire software lifecycle. A code-to-cloud strategy ensures continuous protection from initial code creation through CI/CD pipelines to live cloud environments. This full-stack visibility and control is essential for securing complex, distributed applications at scale.
-
-### 03 Govern AI use in development
-Develop formal policies, approved tools, and auditing practices to secure AI-generated code. Treat AI not just as a risk, but also as a powerful enabler for security automation and intelligent remediation.
-
-### 04 Don’t just acquire tools, operationalize them
-Integrate tools like SAST, DAST, SCA, and ASPM into developer-native workflows and central governance models. Tooling must be unified, measurable, and aligned with business velocity.
-
-### 05 Prepare for agentic AI in AppSec
-Organizations must begin planning for the integration of agentic AI solutions to manage the scale and velocity of AI-generated code. As code volume continues to surge, traditional review and remediation processes won’t be enough. AppSec strategies must evolve to include AI-driven agents capable of automating code analysis, policy enforcement, and real-time risk mitigation. In the near future, the only viable response to AI-scale development may be AI-powered defense.
-
-### 06 Fuel cultural change with developer empowerment
-Invest in secure code training, clear security ownership, and incentivized metrics. A culture where developers, security, and operations share responsibility will be foundational to building technical resilience.
+1. **Move from awareness to action**: A mature security posture requires shared accountability and operationalized practices.
+2. **Embed ‘code-to-cloud’ security**: Ensure continuous protection from initial code creation through CI/CD pipelines to live cloud environments.
+3. **Govern AI use in development**: Develop formal policies, approved tools, and auditing practices.
+4. **Don’t just acquire tools, operationalize them**: Integrate tools like SAST, DAST, SCA, and ASPM into developer-native workflows.
+5. **Prepare for agentic AI in AppSec**: Plan for the integration of agentic AI solutions to manage the scale of AI-generated code.
+6. **Fuel cultural change with developer empowerment**: Invest in secure code training, clear security ownership, and incentivized metrics.
 
 ## Introduction
+The convergence of AI, edge computing, cloud-native development, and complex software supply chains is dramatically expanding the attack surface. In 2025, development is accelerating so rapidly that it is opening a gap too wide for security to bridge without a fundamental shift in mindset. It is no longer sufficient to bolt on security at the final stages of development. Organizations must adopt modern DevSecOps governance models that make security everybody’s responsibility.
 
-The threat landscape is evolving at an unprecedented pace.
-
-The convergence of emerging technologies such as artificial intelligence (AI), edge computing, cloud-native development, and complex software supply chains is dramatically expanding the attack surface.
-
-Meanwhile, malicious actors are exploiting this growth with increasing sophistication—automating exploits, scaling social engineering, and leveraging AI to uncover vulnerabilities faster than ever before.
-
-AppSec has always been in a race to catch up with development, managing to stay on pace, but only just. In 2025, however, development is accelerating so rapidly that it’s opening a gap too wide for security to bridge without a fundamental shift in mindset.
-
-We surveyed CISOs, AppSec Managers and Heads of Development to explore their views on:
-- The AppSec readiness gap
-- Security risk tolerance
-- Security tooling
-- AI as a security risk and opportunity
-- Security-developer relations
-
-Based on the survey results, this report captures a pivotal moment in the journey of application security.
-
-While awareness of threats is high, the research reveals a maturity gap that leaves many organizations exposed due to cultural inertia, fragmented practices, and outdated security models.
-
-Vulnerable code is knowingly shipped into production at an increasing rate, security tooling remains immature, and emerging risk catalysts—like AI-generated code—are often left ungoverned.
-
-While AI accelerates development, it also introduces new risks, including unvetted code, shadow tooling, and a rise in “vibe coding,” where developers trust AI outputs without fully understanding them.
-
-It’s time for application security to undergo a major paradigm shift. It is no longer sufficient to bolt on security at the final stages of development or rely solely on isolated tooling. Even shifting left isn’t enough – you need to shift security everywhere – including further left, even before your first code commit.
-
-Instead, organizations must adopt modern DevSecOps governance models that make security everybody’s responsibility and build the technical resilience needed to embed security across the entire software development lifecycle (SDLC).
-
-Inseparably tied to this shift, organizations should also harness AI not just for code generation, but to accelerate remediation, strengthen Software Supply Chain Security (SSCS), support secure-by-default practices, and improve decision-making throughout the SDLC.
-
-### The Road Ahead: Cautious Optimism
-
+## The Road Ahead: Cautious Optimism
 Amid these challenges, signs of progress are emerging. Developers are becoming more engaged in remediation, investment in secure-by-default practices is increasing, and a shift toward code-to-cloud security models is underway.
 
-The findings in this report not only highlight where organizations are falling short, but also point to the strategies and structural changes that teams are using to close the AppSec readiness gap, making this more than a snapshot of today’s challenges, but a blueprint for securing software in 2025 and beyond.
+## Methodology
+The research was conducted by Censuswide among a sample of 514 CISOs, 501 AppSec Managers, and 504 software developers across the US, Australia, New Zealand, Singapore, the UK, Austria, Germany, France, and Switzerland. The data was collected between April 7, 2025 – April 29, 2025.
 
-### Methodology
+---
 
-**Wave 1 2023:**
-The research was conducted by Censuswide, among a sample of 517 Software Developers, 534 AppSec Managers and 516 CISOs (aged 18+) across the UK, USA, DACH, ANZ, France, Singapore and Brazil. The data was collected between September 5, 2022 – September 26, 2022.
+## Chapter 1: The AppSec Readiness Gap
+Despite growing investment, security breaches remain widespread. 98% of respondents experienced one or more security breaches as a direct result of a vulnerable application in the past 12 months. The percentage of organizations reporting four or more breaches jumped from 16% in 2024 to 27% in 2025.
 
-**Wave 2 2024:**
-The research was conducted by Censuswide, among a sample of 1504 Developers, CISOs, and AppSec Managers (aged 18+) across North America, Europe and APAC. The data was collected between November 30, 2023 – December 21, 2023.
+## Chapter 2: Systemic Risk Tolerance: Why Known Vulnerabilities Reach Production?
+Shipping vulnerable code is a systemic issue. 38% of respondents state that vulnerable code is being shipped to meet a business, feature, or security-related deadline. This is institutionalized risk. When 33% of developers admit they hoped a vulnerability would not be discovered, it suggests a cultural problem—not just a tooling gap.
 
-**Wave 3 2025:**
-The research was conducted by Censuswide, among a sample of 514 CISOs, 501 AppSec Managers, and 504 software developers (aged 18+) across the US, Australia, New Zealand, Singapore, the UK, Austria, Germany, France, and Switzerland. The data was collected between April 7, 2025 – April 29, 2025.
+## Chapter 3: From Critical Exposure to Technical Resilience
+While tools are improving, they are not embedded deeply enough. Only around half of respondents use mature technologies like DAST (47%), container security (53%), or IaC scanning (48%). The barrier is no longer access—it is integration. Organizations need integrated platforms that correlate findings across all security layers—like Application Security Posture Management (ASPM).
 
-Censuswide abides by and employs members of the Market Research Society and follows the MRS code of conduct and ESOMAR principles. Censuswide is also a member of the British Polling Council.
+## Chapter 4: AI: The AppSec Curse and (Possibly) the Cure
+AI is a defining force. 44% of respondents report that 41–60% of their organization’s code was AI-generated in 2024. Shadow AI is now a significant threat, with 20% of respondents noting that AI tools are used without authorization. However, AI is also viewed as an ally; 29% of respondents believe AI has the potential to enhance security posture by tailoring solutions to the nuances of different applications.
 
-## The AppSec Readiness Gap
+## Chapter 5: The Security-Development Rift Is Closing — Slowly
+Security champions are growing, but friction persists. While 82% of CISOs believe over half of vulnerabilities are fixed by developers, only 69% of AppSec Managers agree. This visibility gap suggests that CISOs may be seeing fewer escalated vulnerabilities while missing the broader pattern of accumulated technical debt.
 
-Despite growing investment and awareness, security breaches caused by vulnerable code remain widespread.
+[^1]: Footnote content here.
 
-Most organizations know the risks — yet too few are acting decisively to reduce them. The data shows a widening maturity gap: known vulnerabilities are being released, modern threats are poorly defended, and AppSec tooling remains underutilized.
+---
 
-### The cost of complacency
+urity as a delivery enabler rather
+supported with better tooling and workflows. than a gate. Organizations achieving this
+True developer-friendly security means transformation embed security validation
+embedding security feedback directly into into every development decision point while
+existing development environments—IDEs, providing developers with tools, training, and
+pull requests, CI/CD pipelines—rather than incentives that make secure choices the
+requiring separate security processes. When easier choices.
+security validation is automatic and provides
+clear remediation guidance, developers can
+address vulnerabilities without disrupting their
+delivery velocity.
+The future of application security lies not in resolving the tension between
+speed and security, but in eliminating it through integrated platforms and aligned
+workflows that make secure development the natural path forward.
+Future of Application Security Report | p. 28
 
-Organizations are facing an expanding and evolving threat landscape and paying a heavy price.
+Conclusion
+The application security landscape in 2025 represents a fundamental paradigm
+shift that extends far beyond traditional cybersecurity concerns. What we’re
+witnessing is the emergence of security as a core business capability that directly
+impacts competitive advantage, operational resilience, and market positioning.
+The convergence of AI-accelerated development, cloud-native architectures,
+and increasingly sophisticated threats has created a new reality: security can
+no longer be treated as a compliance checkbox or risk mitigation exercise.
+Organizations that continue to view security through this lens will find themselves
+at a systemic disadvantage against competitors who have embedded security
+as a delivery accelerator.
+The Strategic Imperative: The Cost of Delay:
+The most successful organizations in the coming The gap between security-mature organizations
+years will be those that recognize security and those still treating security as afterthought
+as a strategic differentiator. When security is will widen exponentially. As AI reshapes software
+deeply integrated into development workflows, development and attackers leverage automation
+it becomes a source of velocity rather than to scale their operations, the organizations stuck
+friction—enabling faster, more confident in reactive security models will face escalating
+releases while reducing the operational overhead costs—not just from breaches, but from slower
+of incident response, regulatory scrutiny, and time-to-market, reduced developer productivity,
+technical debt remediation. and lost competitive opportunities.
+The Network Effect of Security Maturity:
+Organizations with mature security practices
+The transformation required
+create positive feedback loops that compound
+isn’t just operational—it’s
+over time. Developers become more productive
+philosophical.
+when they receive clear, actionable security
+guidance. Business leaders gain confidence to
+The future belongs to organizations that
+pursue ambitious digital initiatives when they
+stop asking “how do we secure what
+trust their security foundation. Customers and
+we build?” and start asking “how do we
+partners increasingly view security maturity as
+build security into everything we do?”
+a prerequisite for engagement, creating market
+This shift from security as oversight to
+advantages for security-forward organizations.
+security as enablement will define the
+winners and losers in an increasingly
+digital economy.
+Future of Application Security Report | p. 29
 
-The research reveals that instances of security breaches are on the rise.
-
-98% of respondents say that in the past 12 months their organization experienced one or more security breaches as a direct result of a vulnerable application that their organization developed[^1], compared with 91% of those who said the same last year, and 88% in 2023.
-
-The percentage of organizations reporting four or more breaches jumped from 16% in 2024 to 27% in 2025: an 11-point year-over-year increase. This drift suggests a compounding risk effect, where each breach potentially weakens defenses, exposes additional vulnerabilities, or signals deeper systemic issues in the organization’s software development and security practices.
-
-![Bar chart showing the frequency of security breaches from vulnerable applications in the past 12 months.]
-
-Organizations in Europe (36%) and APAC (34%) are especially likely to have suffered multiple breaches in the past year, with over a third of respondents in each region stating that they have experienced three breaches, while less than a quarter (23%) of those in North America say the same. A 7% YoY increase in breach frequency reveals that despite greater awareness, vulnerability management is not improving. This suggests that policy is disconnected from practice.
-
-The most immediate and visible impact is often business downtime, which 38% of survey respondents cite as an outcome of a breach they experienced in the last 12 months. Typically involving taking infrastructure offline for forensic investigation and remediation, business downtime can severely disrupt productivity and result in a loss of revenue.
-
-(37%) of respondents in the Insurance sector say they have experienced a breach three times in the last 12 months, while just 3% of those in Education say the same.
-
-In parallel, the financial toll (35%) can be substantial, with costs stemming from incident response efforts, regulatory fines, customer compensation, service outages, and increased insurance premiums.
-
-Perhaps even more enduring is the reputational damage (32%) a breach inflicts, as it signifies a failure to fulfill a duty of care, undermines stakeholder trust, and erodes competitive standing. These impacts do not exist in isolation. They compound one another, creating a feedback loop of operational and strategic vulnerabilities. Organizations lacking cybersecurity maturity are especially prone to experiencing the most severe consequences, highlighting the urgent need for proactive and comprehensive risk management.
-
-The findings also indicate that organizations in some industries are more vulnerable than others. Almost 2 in 5 (37%) respondents in the Insurance sector say they have experienced a breach three times in the last 12 months, while just 3% of those in Education say the same.
-
-### What this means
-
-**The False Economy of “Survivable” Breaches**
-
-Organizations have possibly developed a dangerous comfort with security breaches.
-
-But the data shows this mindset is backfiring—98% of organizations experienced breaches in the past year, up 7% from last year. Each breach doesn’t just cost money; it can erode customer trust, regulatory standing, and market position in ways that compound over time.
-
-**Actionable Insights by Role:**
-
-**CISOs:**
-Your board has heard breach statistics before and tuned them out. Instead, calculate the cumulative operational drag of your last three breaches—lost deals, extended sales cycles, regulatory audit overhead, customer retention costs. Present security investment as revenue protection, not cost center spending. Get specific about how breaches slow business growth.
-
-**AppSec Managers:**
-Opt for measuring developer engagement with security, rather than tool deployment. Low adoption means poor workflow integration. Embed security feedback directly into IDEs and pull requests where developers already work. Track time-to-fix vulnerabilities, not just vulnerability discovery rates.
-
-**Development Leaders**
-Audit whether your “developer-friendly” security actually works or just provides cover for shipping vulnerabilities. Create hard stops for critical vulnerabilities in CI/CD and give developers fast remediation paths instead of easy workarounds.
-
-**The Core Problem:**
-
-Organizations knowingly ship vulnerable code, treating this as acceptable business practice. This isn’t about needing better tools or more training—it’s about normalizing dangerous shortcuts. The gap between security awareness and security maturity is widening because awareness without operational accountability is meaningless.
-
-### Modern threats, same old AppSec
-
-Market trends are putting organizations at risk of diverse security threats.
-
-Respondents cite a wide range of security threats that are expected to cause disruption in the next 12-18 months. These are directly driven by some of the most dominant market trends in software development, which are introducing new vulnerabilities to the SDLC.
-
-Respondents are most likely anticipating software supply chain compromises (35%) and third-party vendor/partner security incidents (35%). This is unsurprising given that 67%[^2] of respondents say half or more of their organization’s application code consists of open-
+Key Takeaways
+For AppSec Managers For CISOs
+Operationalize and embed tools into Shift from policy to practice and nurture a
+developer workflows security-aligned culture
+Despite having access to mature technologies While 98% of organizations experienced
+like SAST, DAST, IaC scanning, and SBOMs, breaches due to vulnerable code, 81% knowingly
+most organizations underutilize them. AppSec shipped that code, often to meet business goals.
+managers must focus on integrating these This reveals a systemic disconnect between
+tools natively within CI/CD pipelines, aligning policy and execution. CISOs must drive a cultural
+with developer processes, and leveraging transformation that embeds security into delivery
+platforms like ASPM to enable unified visibility metrics, aligns incentives across functions, and
+and control across the SDLC. Tooling is only as ensures that speed does not come at the cost of
+effective as its adoption and integration. risk. Governance must go beyond compliance to
+become a strategic enabler of resilience.
+For Developers
+Own security as part of quality, not an afterthought
+Developers are fixing more vulnerabilities than ever before yet are still often expected to
+choose between shipping and securing. With 33% admitting they hoped vulnerabilities
+wouldn’t be discovered post-release, it’s clear that security is still seen as a blocker rather
+than a shared goal. Embracing DevSecOps and code-to-cloud practices means integrating
+secure coding habits, leveraging AI responsibly, and collaborating closely with security
+teams to build software that’s both fast and safe.
+Notes:
+1‘Once’, ‘Twice’, ‘3 times’, ‘4 times’, ‘5 times’ and ‘More than 5 times, please specify’ responses combined. | 2‘Often’ and ‘Sometimes’ responses combined. | 3‘50%-74%’, 75%-99% and ‘100%’ responses combined.
+Transform Your Application
+Security with Agentic AI
+Checkmarx One Assist brings AppSec into the Agentic AI
+age, helping you deliver secure code with speed.
+Request a Demo
+Checkmarx helps the world’s largest enterprises get ahead of application risk without slowing down development. We end the guesswork by identifying
+the most critical issues to fix and give AppSec the tools they need, all while letting developers work the way they want. From DevSecOps to developer
+experience, security and development teams can now work better together. That’s why 1700+ customers rely on Checkmarx to scan over 1 trillion lines of
+code annually, improve developer productivity by 50%, and deliver 2X AppSec ROI.
+Checkmarx. Always Ready To Run.
